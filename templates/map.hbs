@@ -1,0 +1,23 @@
+<div data-widget-fullscreenbutton="true"
+     class="jarviswidget jarviswidget-color-white" role="widget">
+  <header>
+    <span class="widget-icon"> <i class="fa fa-map-marker"></i> </span>
+    <h2>Gemarkung Rotta Flur 3</h2>
+  </header>
+  <div>
+    <div class="widget-body no-padding" id="map_container">
+    </div>
+  </div>
+</div>
+{{#if actions}}
+  <ul class="actions">
+  {{#each actions}}
+    <li>
+      <a href="{{route}}" class="btn {{btn_class}}"
+         data-url="{{url}}" data-callback="{{callback}}">
+        <i class="{{icon}}"></i> {{title}}
+      </a>
+    </li>
+  {{/each}}
+  </ul>
+{{/if}}

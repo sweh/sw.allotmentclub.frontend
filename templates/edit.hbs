@@ -1,0 +1,50 @@
+<div role="widget"
+     class="jarviswidget jarviswidget-color-darken jarviswidget-sortable"
+     id="wid-id-1">
+  <header role="heading">
+    <span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+    <h2>{{title}}</h2>
+    <span class="jarviswidget-loader">
+      <i class="fa fa-refresh fa-spin"></i>
+    </span>
+  </header>
+  <div role="content">
+    <div class="jarviswidget-editbox"></div>
+    <div class="widget-body no-padding">
+      <form class="smart-form">
+        <fieldset>
+          {{#each form}}
+          <section>
+            <label class="label">{{title}}</label>
+            {{#if values}}
+              <label class="select">
+                <select name="{{name}}" class="input-sm {{css_class}}">
+                  <option value="">Bitte auswählen</option>
+                  {{#each values}}
+                    <option value="{{id}}"
+                    {{#if selected}} selected="selected" {{/if}}
+                    >{{value}}</option>
+                  {{/each}}
+                </select>
+              </label>
+            {{else}}
+              {{#if markdown}}
+                <textarea class="{{css_class}}" style="height: 400px"
+                          name="{{name}}">{{value}}</textarea>
+              {{else}}
+                <label class="input">
+                  <{{form_tag}} type="text" class="input-sm {{css_class}}"
+                                name="{{name}}" value="{{value}}" />
+                </label>
+              {{/if}}
+            {{/if}}
+          </section>
+          {{/each}}
+        </fieldset>
+        <footer>
+          <button type="submit" class="btn btn-primary">Absenden</button>
+        </footer>
+      </form>
+    </div>
+  </div>
+</div>

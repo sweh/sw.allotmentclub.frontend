@@ -1,0 +1,17 @@
+<label class="select select-multiple">
+  <select name="{{name}}" class="input-sm custom-scroll {{css_class}}"
+          multiple="multiple"
+          {{#if disabled}} disabled="disabled" {{/if}}
+          data-bind="selectedOptions: {{name}},
+                     options: __sources__.{{name}},
+                     optionsText: 'title',
+                     optionsCaption: '{{placeholder}}',
+                     optionsAfterRender: function(option, item) {
+                       if (!item && {{required}}) {
+                         option.disabled = true;
+                       } else if (item) {
+                         option.value = item.token;
+                       }
+                      }">
+  </select>
+</label>

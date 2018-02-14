@@ -1,0 +1,68 @@
+<div id="table_view" role="widget"
+     class="jarviswidget jarviswidget-color-darken jarviswidget-sortable">
+  <header>
+    {{#if years}}
+    <div role="dropdown" class="widget-toolbar smart-form">
+      <label class="select">
+        <select class="input-sm" style="width: 70px" name="for_year">
+          {{#each years}}
+            <option value="{{year}}"
+            {{#if selected}} selected="selected" {{/if}}
+            >{{year}}</option>
+          {{/each}}
+        </select>
+        <i> </i>
+      </label>
+    </div>
+    {{/if}}
+    <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+    <h2>{{#if title}}{{title}}{{/if}}</h2>
+  </header>
+  <div>
+    <div class="widget-body no-padding">
+      {{#if info}}
+      <div class="alert alert-info no-margin fade in">
+        <button class="close" data-dismiss="alert">
+        ×
+        </button>
+        <i class="fa-fw fa fa-info"></i>
+        {{info}}
+      </div>
+      {{/if}}
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+          <thead>
+            <tr>
+              {{#each header}}
+              <th class="{{css_class}}"
+                  data-class="{{data-class}}"
+                  data-hide="{{data-hide}}">{{name}}</th>
+              {{/each}}
+            </tr>
+          </thead>
+          <tbody>
+            {{#each data}}
+              <tr>
+                {{#each this}}
+                  <td class="{{css_class}}">{{{value}}}</td>
+                {{/each}}
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{{#if actions}}
+  <ul class="actions">
+  {{#each actions}}
+    <li>
+      <a href="{{route}}" class="btn {{btn_class}}"
+         data-url="{{url}}" data-callback="{{callback}}">
+        <i class="{{icon}}"></i> {{title}}
+      </a>
+    </li>
+  {{/each}}
+  </ul>
+{{/if}}

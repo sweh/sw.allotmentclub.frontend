@@ -1,0 +1,19 @@
+<div id="documents-list"
+     data-collection-url="{{documents_collection_url}}"
+     data-template="form_upload_list_item"
+     data-disabled="{{disabled}}"
+     data-form-options='{
+       "title": {"label": "Titel"},
+       "size": {"label": "Dateigröße"}
+     }'
+     data-modal-title="Bearbeiten">
+</div>
+<br />
+{{#if disabled}}
+{{else}}
+<div id="upload" class="dropzone">
+  <div class="dz-default dz-message">
+    <span>Bitte Dateien hier ablegen.</span>
+  </div>
+</div>
+{{/if}}

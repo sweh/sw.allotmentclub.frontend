@@ -1,0 +1,21 @@
+<ul>
+  {{#each items}}
+  <li class="">
+  <a href="#{{route}}" data-url="{{url}}" data-title="{{title}}"
+     data-css="{{css}}">
+      <i class="fa fa-lg fa-fw {{css}}"></i>
+      <span class="menu-item-parent">{{title}}</span>
+    </a>
+    {{#if subs}}
+      <ul>
+        {{#each subs}}
+        <li>
+        <a href="#{{route}}" data-url="{{url}}" data-title="{{title}}"
+           data-css="{{../css}}">{{title}}</a>
+        </li>
+        {{/each}}
+      </ul>
+    {{/if}}
+  </li>
+  {{/each}}
+</ul>

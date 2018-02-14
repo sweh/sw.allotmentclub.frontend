@@ -1,0 +1,29 @@
+<div class="well well-sm">
+  <div class="smart-timeline">
+    <ul class="smart-timeline-list">
+      {{#each timeline}}
+      <li>
+        <div class="smart-timeline-icon">
+          {{#if gravatar_url}}
+            <img src="{{gravatar_url}}" alt="{{username}}" width="32" height="32">
+          {{else}}
+            <i class="fa {{fa_icon}}"></i>
+          {{/if}}
+
+        </div>
+        <div class="smart-timeline-time">
+          <small>{{time}}</small>
+        </div>
+        <div class="smart-timeline-content">
+          <p>
+            <strong>{{firstname}} {{lastname}} ({{username}})</strong></a>
+          </p>
+          {{#each detail}}
+            <p>{{this}}</p>
+          {{/each}}
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>
