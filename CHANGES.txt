@@ -7,10 +7,11 @@ X.X.X (unreleased)
 
 - Nothing changed yet.
 
-3.10.0 (2018-02-15)
-===================
 
-- Nothing changed yet.
+4.0.0 (2018-02-15)
+==================
+
+- Move frontend into seperate package.
 
 
 3.9.0 (2018-02-14)
