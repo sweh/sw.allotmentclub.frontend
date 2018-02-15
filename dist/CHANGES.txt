@@ -2,6 +2,24 @@
 Change log for sw.allotmentclub
 ===============================
 
+3.10.0 (2018-02-15)
+===================
+
+- Nothing changed yet.
+
+
+3.9.0 (2018-02-14)
+==================
+
+- Fix install requirements to be able to install them only from pypi.
+
+
+3.8.0 (2018-02-13)
+==================
+
+- Prepare package for the first release on Pypi.
+
+
 3.7.6 (2018-01-31)
 ==================
 
