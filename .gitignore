@@ -5,3 +5,5 @@ coverage.json
 cobertura-coverage.xml
 report/
 undefined/
+lcov-report/
+lcov.info
