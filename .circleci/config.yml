@@ -5,6 +5,8 @@
 version: 2
 jobs:
   build:
+    environment:
+      CC_TEST_REPORTER_ID: a5a5641cce52e23ebf6c335dda5d173abb9bf9858fa7e1428ea31b2bdedda63b
     docker:
       - image: circleci/node:7.10
 
@@ -13,18 +15,22 @@ jobs:
     steps:
       - checkout
 
-      # Download and cache dependencies
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
+
+      - run:
+          name: install test-reporter
+          command: |
+              curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+              chmod +x ./cc-test-reporter
 
       - run:
           name: install dependencies
           command: |
-            npm install -g grunt
-            npm install -g bower
+            sudo npm install -g grunt
+            sudo npm install -g bower
             npm install
             grunt
 
@@ -33,8 +39,9 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: grunt phantomjs
-
-
-
-
+      - run:
+          name: run tests
+          command: |
+            ./cc-test-reporter before-build
+            grunt phantomjs
+            ./cc-test-reporter after-build --exit-code $?
