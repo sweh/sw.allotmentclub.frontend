@@ -2,5 +2,6 @@ bower_components/
 node_modules/
 package-lock.json
 coverage.json
+cobertura-coverage.xml
 report/
 undefined/
