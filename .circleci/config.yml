@@ -44,4 +44,4 @@ jobs:
           command: |
             ./cc-test-reporter before-build
             grunt phantomjs
-            ./cc-test-reporter after-build --exit-code $?
+            ./cc-test-reporter after-build -t lcov --exit-code $?

@@ -229,7 +229,10 @@ module.exports = function (grunt) {
                     templateOptions: {
                         coverage: 'coverage.json',
                         report: {
-                            type: 'lcov'
+                            type: 'lcov',
+                            options: {
+                                dir: 'coverage'
+                            }
                         },
                         thresholds: {
                             lines: 55,
