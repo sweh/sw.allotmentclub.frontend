@@ -7,3 +7,6 @@ report/
 undefined/
 lcov-report/
 lcov.info
+.grunt/
+_SpecRunner.html
+tags*

@@ -87,8 +87,14 @@ sw.allotmentclub.version = version.version;
             },
 
             download: function () {
-                var self = this;
-                sw.allotmentclub.download(self.url);
+                var self = this,
+                year = self.dom().find('select[name="for_year"]').val(),
+                url = self.url;
+
+                if (year) {
+                    url = self.url + '?for_year=' + year;
+                }
+                sw.allotmentclub.download(url);
             },
 
             render: function (data) {

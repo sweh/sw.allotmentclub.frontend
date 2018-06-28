@@ -59,6 +59,9 @@
         });
         sw.allotmentclub.banking_account_list_detail_view = new BankingAccountListDetailView();
 
+        sw.allotmentclub.banking_account_list_report_view = new sw.allotmentclub.DownloadView(
+            'banking_account_list_report'
+        );
 
         SEPADirectDebitView = sw.allotmentclub.TableView.$extend({
             viewname: 'sepa_direct_debit',
