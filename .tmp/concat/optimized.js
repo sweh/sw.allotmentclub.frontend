@@ -101429,7 +101429,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.2.2"
+    "version": "4.3.0"
 };
 
 sw.allotmentclub.version = version.version;
@@ -101513,8 +101513,14 @@ sw.allotmentclub.version = version.version;
             },
 
             download: function () {
-                var self = this;
-                sw.allotmentclub.download(self.url);
+                var self = this,
+                year = self.dom().find('select[name="for_year"]').val(),
+                url = self.url;
+
+                if (year) {
+                    url = self.url + '?for_year=' + year;
+                }
+                sw.allotmentclub.download(url);
             },
 
             render: function (data) {
@@ -102647,6 +102653,9 @@ sw.allotmentclub.version = version.version;
         });
         sw.allotmentclub.banking_account_list_detail_view = new BankingAccountListDetailView();
 
+        sw.allotmentclub.banking_account_list_report_view = new sw.allotmentclub.DownloadView(
+            'banking_account_list_report'
+        );
 
         SEPADirectDebitView = sw.allotmentclub.TableView.$extend({
             viewname: 'sepa_direct_debit',
