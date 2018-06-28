@@ -2,10 +2,18 @@
 Change log for sw.allotmentclub
 ===============================
 
+4.4.2 (2018-06-28)
+==================
+
+- Add Datum column to account report.
+
+- Fix a table rendering bug when a cell is empty.
+
+
 4.4.1 (2018-06-28)
 ==================
 
-- Nothing changed yet.
+- Fix brown bag release.
 
 
 4.4.0 (2018-06-28)
