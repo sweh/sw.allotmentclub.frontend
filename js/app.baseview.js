@@ -3,7 +3,7 @@
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.4.3-dev.0"
+    "version": "4.4.3"
 };
 
 sw.allotmentclub.version = version.version;
@@ -341,6 +341,7 @@ sw.allotmentclub.version = version.version;
                         "sLoadingRecords": "Wird geladen...",
                         "sProcessing": "Bitte warten...",
                         "sZeroRecords": "Keine Einträge vorhanden.",
+                        "sSearch": "Suche",
                         "oPaginate": {
                             "sFirst": "Erste",
                             "sPrevious": "Zurück",

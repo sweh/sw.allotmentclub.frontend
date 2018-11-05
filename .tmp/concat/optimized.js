@@ -101429,7 +101429,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.4.2"
+    "version": "4.4.3"
 };
 
 sw.allotmentclub.version = version.version;
@@ -101767,6 +101767,7 @@ sw.allotmentclub.version = version.version;
                         "sLoadingRecords": "Wird geladen...",
                         "sProcessing": "Bitte warten...",
                         "sZeroRecords": "Keine Einträge vorhanden.",
+                        "sSearch": "Suche",
                         "oPaginate": {
                             "sFirst": "Erste",
                             "sPrevious": "Zurück",
