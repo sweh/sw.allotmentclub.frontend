@@ -13,6 +13,28 @@ this["ajja"]["templates"]["ajja"] = Handlebars.template({"compiler":[7,">= 4.0.0
     + "</h2>\n    <span class=\"jarviswidget-loader\">\n      <i class=\"fa fa-refresh fa-spin\"></i>\n    </span>\n  </header>\n  <div role=\"content\">\n    <div class=\"jarviswidget-editbox\"></div>\n    <div class=\"widget-body no-padding\">\n      <form class=\"smart-form\" id=\"ajja\"></form>\n    </div>\n  </div>\n</div>\n";
 },"useData":true});
 
+this["ajja"]["templates"]["dashboard"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "          <div class=\"col-sm-4 col-md-2 "
+    + alias4(((helper = (helper = helpers.css_class || (depth0 != null ? depth0.css_class : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"css_class","hash":{},"data":data}) : helper)))
+    + " text-center\">\n              <h3 class=\"margin-bottom-0\">\n                "
+    + alias4(((helper = (helper = helpers.current_value || (depth0 != null ? depth0.current_value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"current_value","hash":{},"data":data}) : helper)))
+    + "\n              <br>\n              <small class=\"font-xs\"><sup style=\"top: 0em;\">\n                <span class=\"badge\" style=\"background-color: "
+    + alias4(((helper = (helper = helpers.color || (depth0 != null ? depth0.color : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"color","hash":{},"data":data}) : helper)))
+    + "\">\n                  "
+    + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+    + "\n                </span>\n              </sup></small>\n            </h3>\n          </div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return "<article class=\"col-xs-12 col-sm-12 col-md-12 col-lg-12\">\n  <div class=\"jarviswidget jarviswidget-color-blueDark\" id=\"wid-id-1\">\n    <header>\n      <h2>Lüftungsanlage</h2>\n        <div class=\"widget-toolbar\" role=\"menu\">\n          Aktualisiert "
+    + container.escapeExpression(((helper = (helper = helpers.date || (depth0 != null ? depth0.date : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"date","hash":{},"data":data}) : helper)))
+    + "\n        <div>\n    </header>\n    <div>\n      <div class=\"jarviswidget-editbox\">\n        <input class=\"form-control\" type=\"text\">\n      </div>\n      <div class=\"widget-body no-padding\">\n        <div class=\"row\">\n"
+    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.temperatures : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "        </div>\n\n        <hr class=\"margin-5\">\n\n        <div id=\"helioschart\" class=\"chart\"></div>\n\n      </div>\n    </div>\n  </div>\n</article>\n\n";
+},"useData":true});
+
 this["ajja"]["templates"]["edit"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
