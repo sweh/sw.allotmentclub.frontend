@@ -97,6 +97,27 @@ sw.allotmentclub.version = version.version;
                 sw.allotmentclub.download(url);
             },
 
+            update_temp_badge: function (data) {
+                if (data && data.temp) {
+                    var t = data.temp.temperature;
+                    var trend = data.temp.trend;
+                    var date = data.temp.date;
+                    var rain = data.temp.sum_rain_24;
+                    var hue = 30 + 240 * (30 - t) / 60;
+
+                    $('#sparks').attr('title', date);
+
+                    $('.nt-temp').html(
+                      '<i class="fa fa-arrow-circle-' + trend + '"></i> ' +
+                      t + '&#8239;°C'
+                    );
+                    $('.nt-rain').html(
+                      '<i class="fa fa-umbrella"></i> ' + rain + '&#8239;mm'
+                    );
+                    $('.nt-temp').css({'color': 'hsl(' + [hue, '70%', '50%'] + ')'});
+                }
+            },
+
             render: function (data) {
                 var self = this, template, html, year;
                 self.prepare_url();

@@ -19,8 +19,12 @@ this["ajja"]["templates"]["dashboard"] = Handlebars.template({"1":function(conta
   return "          <div class=\"col-sm-4 col-md-2 "
     + alias4(((helper = (helper = helpers.css_class || (depth0 != null ? depth0.css_class : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"css_class","hash":{},"data":data}) : helper)))
     + " text-center\">\n              <h3 class=\"margin-bottom-0\">\n                "
-    + alias4(((helper = (helper = helpers.current_value || (depth0 != null ? depth0.current_value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"current_value","hash":{},"data":data}) : helper)))
-    + "\n              <br>\n              <small class=\"font-xs\"><sup style=\"top: 0em;\">\n                <span class=\"badge\" style=\"background-color: "
+    + alias4(((helper = (helper = helpers.current_value_str || (depth0 != null ? depth0.current_value_str : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"current_value_str","hash":{},"data":data}) : helper)))
+    + " <i class=\"fa fa-caret-"
+    + alias4(((helper = (helper = helpers.tendency || (depth0 != null ? depth0.tendency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"tendency","hash":{},"data":data}) : helper)))
+    + "\" style=\"color: "
+    + alias4(((helper = (helper = helpers.color || (depth0 != null ? depth0.color : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"color","hash":{},"data":data}) : helper)))
+    + "\"></i>\n              <br>\n              <small class=\"font-xs\"><sup style=\"top: 0em;\">\n                <span class=\"badge\" style=\"background-color: "
     + alias4(((helper = (helper = helpers.color || (depth0 != null ? depth0.color : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"color","hash":{},"data":data}) : helper)))
     + "\">\n                  "
     + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))

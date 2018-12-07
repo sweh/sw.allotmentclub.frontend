@@ -15,7 +15,7 @@
           {{#each temperatures}}
           <div class="col-sm-4 col-md-2 {{css_class}} text-center">
               <h3 class="margin-bottom-0">
-                {{current_value}}
+                {{current_value_str}} <i class="fa fa-caret-{{tendency}}" style="color: {{color}}"></i>
               <br>
               <small class="font-xs"><sup style="top: 0em;">
                 <span class="badge" style="background-color: {{color}}">

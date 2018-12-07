@@ -22,8 +22,8 @@
             initialize: function (data) {
                 var self = this;
                 self.data = data;
-                console.log(self.data);
                 self.helioschart();
+                self.update_temp_badge(self.data);
             },
 
             helioschart: function() {
