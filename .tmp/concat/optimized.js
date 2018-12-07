@@ -104287,8 +104287,12 @@ this["ajja"]["templates"]["dashboard"] = Handlebars.template({"1":function(conta
   return "          <div class=\"col-sm-4 col-md-2 "
     + alias4(((helper = (helper = helpers.css_class || (depth0 != null ? depth0.css_class : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"css_class","hash":{},"data":data}) : helper)))
     + " text-center\">\n              <h3 class=\"margin-bottom-0\">\n                "
-    + alias4(((helper = (helper = helpers.current_value || (depth0 != null ? depth0.current_value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"current_value","hash":{},"data":data}) : helper)))
-    + "\n              <br>\n              <small class=\"font-xs\"><sup style=\"top: 0em;\">\n                <span class=\"badge\" style=\"background-color: "
+    + alias4(((helper = (helper = helpers.current_value_str || (depth0 != null ? depth0.current_value_str : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"current_value_str","hash":{},"data":data}) : helper)))
+    + " <i class=\"fa fa-caret-"
+    + alias4(((helper = (helper = helpers.tendency || (depth0 != null ? depth0.tendency : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"tendency","hash":{},"data":data}) : helper)))
+    + "\" style=\"color: "
+    + alias4(((helper = (helper = helpers.color || (depth0 != null ? depth0.color : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"color","hash":{},"data":data}) : helper)))
+    + "\"></i>\n              <br>\n              <small class=\"font-xs\"><sup style=\"top: 0em;\">\n                <span class=\"badge\" style=\"background-color: "
     + alias4(((helper = (helper = helpers.color || (depth0 != null ? depth0.color : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"color","hash":{},"data":data}) : helper)))
     + "\">\n                  "
     + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
@@ -105053,7 +105057,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.5.0"
+    "version": "4.5.1"
 };
 
 sw.allotmentclub.version = version.version;
@@ -105145,6 +105149,27 @@ sw.allotmentclub.version = version.version;
                     url = self.url + '?for_year=' + year;
                 }
                 sw.allotmentclub.download(url);
+            },
+
+            update_temp_badge: function (data) {
+                if (data && data.temp) {
+                    var t = data.temp.temperature;
+                    var trend = data.temp.trend;
+                    var date = data.temp.date;
+                    var rain = data.temp.sum_rain_24;
+                    var hue = 30 + 240 * (30 - t) / 60;
+
+                    $('#sparks').attr('title', date);
+
+                    $('.nt-temp').html(
+                      '<i class="fa fa-arrow-circle-' + trend + '"></i> ' +
+                      t + '&#8239;°C'
+                    );
+                    $('.nt-rain').html(
+                      '<i class="fa fa-umbrella"></i> ' + rain + '&#8239;mm'
+                    );
+                    $('.nt-temp').css({'color': 'hsl(' + [hue, '70%', '50%'] + ')'});
+                }
             },
 
             render: function (data) {
@@ -105872,27 +105897,6 @@ sw.allotmentclub.version = version.version;
                 if (data && data.user) {
                     $('.login-info img').attr('src', data.user.gravatar);
                     $('.login-info a span').text(data.user.name);
-                }
-            },
-
-            update_temp_badge: function (data) {
-                if (data && data.temp) {
-                    var t = data.temp.temperature;
-                    var trend = data.temp.trend;
-                    var date = data.temp.date;
-                    var rain = data.temp.sum_rain_24;
-                    var hue = 30 + 240 * (30 - t) / 60;
-
-                    $('#sparks').attr('title', date);
-
-                    $('.nt-temp').html(
-                      '<i class="fa fa-arrow-circle-' + trend + '"></i> ' +
-                      t + '&#8239;°C'
-                    );
-                    $('.nt-rain').html(
-                      '<i class="fa fa-umbrella"></i> ' + rain + '&#8239;mm'
-                    );
-                    $('.nt-temp').css({'color': 'hsl(' + [hue, '70%', '50%'] + ')'});
                 }
             },
 
@@ -106974,8 +106978,8 @@ sw.allotmentclub.version = version.version;
             initialize: function (data) {
                 var self = this;
                 self.data = data;
-                console.log(self.data);
                 self.helioschart();
+                self.update_temp_badge(self.data);
             },
 
             helioschart: function() {
