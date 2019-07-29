@@ -47521,7 +47521,7 @@ if (typeof jQuery === 'undefined') {
 
     AbstractChosen.prototype.choice_label = function(item) {
       if (this.include_group_label_in_selected && (item.group_label != null)) {
-        return "<b class='group-name'>" + item.group_label + "</b>" + item.html;
+        return "<b class='group-name'>" + (this.escape_html(item.group_label)) + "</b>" + item.html;
       } else {
         return item.html;
       }
@@ -47627,7 +47627,9 @@ if (typeof jQuery === 'undefined') {
       }
       option_el = document.createElement("li");
       option_el.className = classes.join(" ");
-      option_el.style.cssText = option.style;
+      if (option.style) {
+        option_el.style.cssText = option.style;
+      }
       option_el.setAttribute("data-option-array-index", option.array_index);
       option_el.innerHTML = option.highlighted_html || option.html;
       if (option.title) {
@@ -47701,7 +47703,7 @@ if (typeof jQuery === 'undefined') {
       }
     };
 
-    AbstractChosen.prototype.winnow_results = function() {
+    AbstractChosen.prototype.winnow_results = function(options) {
       var escapedQuery, fix, i, len, option, prefix, query, ref, regex, results, results_group, search_match, startpos, suffix, text;
       this.no_results_clear();
       results = 0;
@@ -47757,7 +47759,9 @@ if (typeof jQuery === 'undefined') {
         return this.no_results(query);
       } else {
         this.update_results_content(this.results_option_build());
-        return this.winnow_results_set_highlight();
+        if (!(options != null ? options.skip_highlight : void 0)) {
+          return this.winnow_results_set_highlight();
+        }
       }
     };
 
@@ -47944,7 +47948,7 @@ if (typeof jQuery === 'undefined') {
     };
 
     AbstractChosen.prototype.get_single_html = function() {
-      return "<a class=\"chosen-single chosen-default\">\n  <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" />\n  <span>" + this.default_text + "</span>\n  <div><b></b></div>\n</a>\n<div class=\"chosen-drop\">\n  <div class=\"chosen-search\">\n  </div>\n  <ul class=\"chosen-results\"></ul>\n</div>";
+      return "<a class=\"chosen-single chosen-default\">\n  <span>" + this.default_text + "</span>\n  <div><b></b></div>\n</a>\n<div class=\"chosen-drop\">\n  <div class=\"chosen-search\">\n    <input class=\"chosen-search-input\" type=\"text\" autocomplete=\"off\" />\n  </div>\n  <ul class=\"chosen-results\"></ul>\n</div>";
     };
 
     AbstractChosen.prototype.get_multi_html = function() {
@@ -48353,9 +48357,6 @@ if (typeof jQuery === 'undefined') {
         });
         return false;
       }
-      if (!this.is_multiple) {
-        this.search_container.append(this.search_field);
-      }
       this.container.addClass("chosen-with-drop");
       this.results_showing = true;
       this.search_field.focus();
@@ -48373,10 +48374,6 @@ if (typeof jQuery === 'undefined') {
     Chosen.prototype.results_hide = function() {
       if (this.results_showing) {
         this.result_clear_highlight();
-        if (!this.is_multiple) {
-          this.selected_item.prepend(this.search_field);
-          this.search_field.focus();
-        }
         this.container.removeClass("chosen-with-drop");
         this.form_field_jq.trigger("chosen:hiding_dropdown", {
           chosen: this
@@ -48521,14 +48518,20 @@ if (typeof jQuery === 'undefined') {
         item.selected = true;
         this.form_field.options[item.options_index].selected = true;
         this.selected_option_count = null;
-        this.search_field.val("");
         if (this.is_multiple) {
           this.choice_build(item);
         } else {
           this.single_set_selected_text(this.choice_label(item));
         }
         if (this.is_multiple && (!this.hide_results_on_select || (evt.metaKey || evt.ctrlKey))) {
-          this.winnow_results();
+          if (evt.metaKey || evt.ctrlKey) {
+            this.winnow_results({
+              skip_highlight: true
+            });
+          } else {
+            this.search_field.val("");
+            this.winnow_results();
+          }
         } else {
           this.results_hide();
           this.show_search_field_default();
@@ -72509,7 +72512,7 @@ else if ( jQuery && !jQuery.fn.dataTable.TableTools ) {
 }(this, document));
 
 /*
-Copyright (c) 2008-2018 Pivotal Labs
+Copyright (c) 2008-2019 Pivotal Labs
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -72531,6 +72534,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 var getJasmineRequireObj = (function (jasmineGlobal) {
+  /* globals exports, global, module, window */
   var jasmineRequire;
 
   if (typeof module !== 'undefined' && module.exports && typeof exports !== 'undefined') {
@@ -72568,9 +72572,12 @@ var getJasmineRequireObj = (function (jasmineGlobal) {
     j$.Env = jRequire.Env(j$);
     j$.StackTrace = jRequire.StackTrace(j$);
     j$.ExceptionFormatter = jRequire.ExceptionFormatter(j$);
-    j$.Expectation = jRequire.Expectation();
+    j$.ExpectationFilterChain = jRequire.ExpectationFilterChain();
+    j$.Expector = jRequire.Expector(j$);
+    j$.Expectation = jRequire.Expectation(j$);
     j$.buildExpectationResult = jRequire.buildExpectationResult();
-    j$.JsApiReporter = jRequire.JsApiReporter();
+    j$.noopTimer = jRequire.noopTimer();
+    j$.JsApiReporter = jRequire.JsApiReporter(j$);
     j$.matchersUtil = jRequire.matchersUtil(j$);
     j$.ObjectContaining = jRequire.ObjectContaining(j$);
     j$.ArrayContaining = jRequire.ArrayContaining(j$);
@@ -72595,7 +72602,13 @@ var getJasmineRequireObj = (function (jasmineGlobal) {
     j$.ObjectPath = jRequire.ObjectPath(j$);
     j$.GlobalErrors = jRequire.GlobalErrors(j$);
 
+    j$.Truthy = jRequire.Truthy(j$);
+    j$.Falsy = jRequire.Falsy(j$);
+    j$.Empty = jRequire.Empty(j$);
+    j$.NotEmpty = jRequire.NotEmpty(j$);
+
     j$.matchers = jRequire.requireMatchers(jRequire, j$);
+    j$.asyncMatchers = jRequire.requireAsyncMatchers(jRequire, j$);
 
     return j$;
   };
@@ -72626,6 +72639,7 @@ getJasmineRequireObj().requireMatchers = function(jRequire, j$) {
       'toHaveBeenCalledBefore',
       'toHaveBeenCalledTimes',
       'toHaveBeenCalledWith',
+      'toHaveClass',
       'toMatch',
       'toThrow',
       'toThrowError',
@@ -72660,7 +72674,7 @@ getJasmineRequireObj().base = function(j$, jasmineGlobal) {
    */
   j$.MAX_PRETTY_PRINT_ARRAY_LENGTH = 50;
   /**
-   * Maximum number of charasters to display when pretty printing objects.
+   * Maximum number of characters to display when pretty printing objects.
    * Characters past this number will be ellipised.
    * @name jasmine.MAX_PRETTY_PRINT_CHARS
    */
@@ -72732,9 +72746,15 @@ getJasmineRequireObj().base = function(j$, jasmineGlobal) {
     if (value instanceof Error) {
       return true;
     }
-    if (value && value.constructor && value.constructor.constructor &&
-      (value instanceof (value.constructor.constructor('return this')()).Error)) {
-      return true;
+    if (value && value.constructor && value.constructor.constructor) {
+      var valueGlobal = value.constructor.constructor('return this');
+      if (j$.isFunction_(valueGlobal)) {
+        valueGlobal = valueGlobal();
+      }
+
+      if (valueGlobal.Error && value instanceof valueGlobal.Error) {
+        return true;
+      }
     }
     return false;
   };
@@ -72744,7 +72764,14 @@ getJasmineRequireObj().base = function(j$, jasmineGlobal) {
   };
 
   j$.isDomNode = function(obj) {
-    return obj.nodeType > 0;
+    // Node is a function, because constructors
+    return typeof jasmineGlobal.Node !== 'undefined' ?
+      obj instanceof jasmineGlobal.Node :
+          obj !== null &&
+          typeof obj === 'object' &&
+          typeof obj.nodeType === 'number' &&
+          typeof obj.nodeName === 'string';
+    // return obj.nodeType > 0;
   };
 
   j$.isMap = function(obj) {
@@ -72756,7 +72783,11 @@ getJasmineRequireObj().base = function(j$, jasmineGlobal) {
   };
 
   j$.isPromise = function(obj) {
-    return typeof jasmineGlobal.Promise !== 'undefined' && obj.constructor === jasmineGlobal.Promise;
+    return typeof jasmineGlobal.Promise !== 'undefined' && !!obj && obj.constructor === jasmineGlobal.Promise;
+  };
+
+  j$.isPromiseLike = function(obj) {
+    return !!obj && j$.isFunction_(obj.then);
   };
 
   j$.fnNameFor = function(func) {
@@ -72764,8 +72795,8 @@ getJasmineRequireObj().base = function(j$, jasmineGlobal) {
       return func.name;
     }
 
-    var matches = func.toString().match(/^\s*function\s*(\w*)\s*\(/) ||
-      func.toString().match(/^\s*\[object\s*(\w*)Constructor\]/);
+    var matches = func.toString().match(/^\s*function\s*(\w+)\s*\(/) ||
+      func.toString().match(/^\s*\[object\s*(\w+)Constructor\]/);
 
     return matches ? matches[1] : '<anonymous>';
   };
@@ -72790,6 +72821,38 @@ getJasmineRequireObj().base = function(j$, jasmineGlobal) {
   j$.anything = function() {
     return new j$.Anything();
   };
+
+  /**
+   * Get a matcher, usable in any {@link matchers|matcher} that uses Jasmine's equality (e.g. {@link matchers#toEqual|toEqual}, {@link matchers#toContain|toContain}, or {@link matchers#toHaveBeenCalledWith|toHaveBeenCalledWith}),
+   * that will succeed if the actual value being compared is `true` or anything truthy.
+   * @name jasmine.truthy
+   * @function
+   */
+  j$.truthy = function() {return new j$.Truthy();};
+
+  /**
+   * Get a matcher, usable in any {@link matchers|matcher} that uses Jasmine's equality (e.g. {@link matchers#toEqual|toEqual}, {@link matchers#toContain|toContain}, or {@link matchers#toHaveBeenCalledWith|toHaveBeenCalledWith}),
+   * that will succeed if the actual value being compared is  `null`, `undefined`, `0`, `false` or anything falsey.
+   * @name jasmine.falsy
+   * @function
+   */
+  j$.falsy = function() {return new j$.Falsy();};
+
+  /**
+   * Get a matcher, usable in any {@link matchers|matcher} that uses Jasmine's equality (e.g. {@link matchers#toEqual|toEqual}, {@link matchers#toContain|toContain}, or {@link matchers#toHaveBeenCalledWith|toHaveBeenCalledWith}),
+   * that will succeed if the actual value being compared is empty.
+   * @name jasmine.empty
+   * @function
+   */
+  j$.empty = function() {return new j$.Empty();};
+
+  /**
+   * Get a matcher, usable in any {@link matchers|matcher} that uses Jasmine's equality (e.g. {@link matchers#toEqual|toEqual}, {@link matchers#toContain|toContain}, or {@link matchers#toHaveBeenCalledWith|toHaveBeenCalledWith}),
+   * that will succeed if the actual value being compared is not empty.
+   * @name jasmine.notEmpty
+   * @function
+   */
+  j$.notEmpty = function() {return new j$.NotEmpty();};
 
   /**
    * Get a matcher, usable in any {@link matchers|matcher} that uses Jasmine's equality (e.g. {@link matchers#toEqual|toEqual}, {@link matchers#toContain|toContain}, or {@link matchers#toHaveBeenCalledWith|toHaveBeenCalledWith}),
@@ -72958,7 +73021,7 @@ getJasmineRequireObj().util = function(j$) {
     return false;
   }
 
-  function errorWithStack() {
+  util.errorWithStack = function errorWithStack () {
     // Don't throw and catch if we don't have to, because it makes it harder
     // for users to debug their code with exception breakpoints.
     var error = new Error();
@@ -72973,10 +73036,10 @@ getJasmineRequireObj().util = function(j$) {
     } catch (e) {
       return e;
     }
-  }
+  };
 
   function callerFile() {
-    var trace = new j$.StackTrace(errorWithStack().stack);
+    var trace = new j$.StackTrace(util.errorWithStack());
     return trace.frames[2].file;
   }
 
@@ -73000,6 +73063,7 @@ getJasmineRequireObj().util = function(j$) {
 getJasmineRequireObj().Spec = function(j$) {
   function Spec(attrs) {
     this.expectationFactory = attrs.expectationFactory;
+    this.asyncExpectationFactory = attrs.asyncExpectationFactory;
     this.resultCallback = attrs.resultCallback || function() {};
     this.id = attrs.id;
     this.description = attrs.description || '';
@@ -73012,6 +73076,7 @@ getJasmineRequireObj().Spec = function(j$) {
     this.queueRunnerFactory = attrs.queueRunnerFactory || function() {};
     this.catchingExceptions = attrs.catchingExceptions || function() { return true; };
     this.throwOnExpectationFailure = !!attrs.throwOnExpectationFailure;
+    this.timer = attrs.timer || j$.noopTimer;
 
     if (!this.queueableFn.fn) {
       this.pend();
@@ -73027,6 +73092,7 @@ getJasmineRequireObj().Spec = function(j$) {
      * @property {Expectation[]} deprecationWarnings - The list of deprecation warnings that occurred during execution this spec.
      * @property {String} pendingReason - If the spec is {@link pending}, this will be the reason.
      * @property {String} status - Once the spec has completed, this string represents the pass/fail status of this spec.
+     * @property {number} duration - The time in ms used by the spec execution, including any before/afterEach.
      */
     this.result = {
       id: this.id,
@@ -73035,7 +73101,8 @@ getJasmineRequireObj().Spec = function(j$) {
       failedExpectations: [],
       passedExpectations: [],
       deprecationWarnings: [],
-      pendingReason: ''
+      pendingReason: '',
+      duration: null,
     };
   }
 
@@ -73056,11 +73123,16 @@ getJasmineRequireObj().Spec = function(j$) {
     return this.expectationFactory(actual, this);
   };
 
+  Spec.prototype.expectAsync = function(actual) {
+    return this.asyncExpectationFactory(actual, this);
+  };
+
   Spec.prototype.execute = function(onComplete, excluded) {
     var self = this;
 
     var onStart = {
       fn: function(done) {
+        self.timer.start();
         self.onStart(self, done);
       }
     };
@@ -73084,6 +73156,7 @@ getJasmineRequireObj().Spec = function(j$) {
         self.onException.apply(self, arguments);
       },
       onComplete: function() {
+        self.result.duration = self.timer.elapsed();
         onComplete(self.result.status === 'failed' && new j$.StopExecutionError('spec failed'));
       },
       userContext: this.userContext()
@@ -73151,8 +73224,11 @@ getJasmineRequireObj().Spec = function(j$) {
     return this.getSpecName(this);
   };
 
-  Spec.prototype.addDeprecationWarning = function(msg) {
-    this.result.deprecationWarnings.push(this.expectationResultFactory({ message: msg }));
+  Spec.prototype.addDeprecationWarning = function(deprecation) {
+    if (typeof deprecation === 'string') {
+      deprecation = { message: deprecation };
+    }
+    this.result.deprecationWarnings.push(this.expectationResultFactory(deprecation));
   };
 
   var extractCustomPendingMessage = function(e) {
@@ -73173,6 +73249,7 @@ getJasmineRequireObj().Spec = function(j$) {
 };
 
 if (typeof window == void 0 && typeof exports == 'object') {
+  /* globals exports */
   exports.Spec = jasmineRequire.Spec;
 }
 
@@ -73201,7 +73278,7 @@ getJasmineRequireObj().Order = function() {
     }
 
     // Bob Jenkins One-at-a-Time Hash algorithm is a non-cryptographic hash function
-    // used to get a different output when the key changes slighly.
+    // used to get a different output when the key changes slightly.
     // We use your return to sort the children randomly in a consistent way when
     // used in conjunction with a seed
 
@@ -73238,9 +73315,9 @@ getJasmineRequireObj().Env = function(j$) {
 
     var totalSpecsDefined = 0;
 
-    var realSetTimeout = j$.getGlobal().setTimeout;
-    var realClearTimeout = j$.getGlobal().clearTimeout;
-    var clearStack = j$.getClearStack(j$.getGlobal());
+    var realSetTimeout = global.setTimeout;
+    var realClearTimeout = global.clearTimeout;
+    var clearStack = j$.getClearStack(global);
     this.clock = new j$.Clock(global, function () { return new j$.DelayedFunctionScheduler(); }, new j$.MockDate(global));
 
     var runnableResources = {};
@@ -73248,12 +73325,61 @@ getJasmineRequireObj().Env = function(j$) {
     var currentSpec = null;
     var currentlyExecutingSuites = [];
     var currentDeclarationSuite = null;
-    var throwOnExpectationFailure = false;
-    var stopOnSpecFailure = false;
-    var random = true;
-    var seed = null;
-    var handlingLoadErrors = true;
     var hasFailures = false;
+
+    /**
+     * This represents the available options to configure Jasmine.
+     * Options that are not provided will use their default values
+     * @interface Configuration
+     */
+    var config = {
+      /**
+       * Whether to randomize spec execution order
+       * @name Configuration#random
+       * @type Boolean
+       * @default true
+       */
+      random: true,
+      /**
+       * Seed to use as the basis of randomization.
+       * Null causes the seed to be determined randomly at the start of execution.
+       * @name Configuration#seed
+       * @type function
+       * @default null
+       */
+      seed: null,
+      /**
+       * Whether to stop execution of the suite after the first spec failure
+       * @name Configuration#failFast
+       * @type Boolean
+       * @default false
+       */
+      failFast: false,
+      /**
+       * Whether to cause specs to only have one expectation failure.
+       * @name Configuration#oneFailurePerSpec
+       * @type Boolean
+       * @default false
+       */
+      oneFailurePerSpec: false,
+      /**
+       * Function to use to filter specs
+       * @name Configuration#specFilter
+       * @type function
+       * @default true
+       */
+      specFilter: function() {
+        return true;
+      },
+      /**
+       * Whether or not reporters should hide disabled specs from their output.
+       * Currently only supported by Jasmine's HTMLReporter
+       * @name Configuration#hideDisabled
+       * @type Boolean
+       * @default false
+       */
+      hideDisabled: false
+    };
 
     var currentSuite = function() {
       return currentlyExecutingSuites[currentlyExecutingSuites.length - 1];
@@ -73263,21 +73389,87 @@ getJasmineRequireObj().Env = function(j$) {
       return currentSpec || currentSuite();
     };
 
-    var globalErrors = new j$.GlobalErrors();
-    globalErrors.install();
-    globalErrors.pushListener(function(message, filename, lineno) {
-      topSuite.result.failedExpectations.push({
-        passed: false,
-        globalErrorType: 'load',
-        message: message,
-        filename: filename,
-        lineno: lineno
-      });
-    });
+    var globalErrors = null;
 
-    this.specFilter = function() {
-      return true;
+    var installGlobalErrors = function() {
+      if (globalErrors) {
+        return;
+      }
+
+      globalErrors = new j$.GlobalErrors();
+      globalErrors.install();
     };
+
+    if (!options.suppressLoadErrors) {
+      installGlobalErrors();
+      globalErrors.pushListener(function(message, filename, lineno, colNo, err) {
+        topSuite.result.failedExpectations.push({
+          passed: false,
+          globalErrorType: 'load',
+          message: message,
+          stack: err && err.stack,
+          filename: filename,
+          lineno: lineno
+        });
+      });
+    }
+
+    /**
+     * Configure your jasmine environment
+     * @name Env#configure
+     * @argument {Configuration} configuration
+     * @function
+     */
+    this.configure = function(configuration) {
+      if (configuration.specFilter) {
+        config.specFilter = configuration.specFilter;
+      }
+
+      if (configuration.hasOwnProperty('random')) {
+        config.random = !!configuration.random;
+      }
+
+      if (configuration.hasOwnProperty('seed')) {
+        config.seed = configuration.seed;
+      }
+
+      if (configuration.hasOwnProperty('failFast')) {
+        config.failFast = configuration.failFast;
+      }
+
+      if (configuration.hasOwnProperty('oneFailurePerSpec')) {
+        config.oneFailurePerSpec = configuration.oneFailurePerSpec;
+      }
+
+      if (configuration.hasOwnProperty('hideDisabled')) {
+        config.hideDisabled = configuration.hideDisabled;
+      }
+    };
+
+    /**
+     * Get the current configuration for your jasmine environment
+     * @name Env#configuration
+     * @function
+     * @returns {Configuration}
+     */
+    this.configuration = function() {
+      var result = {};
+      for (var property in config) {
+        result[property] = config[property];
+      }
+      return result;
+    };
+
+    Object.defineProperty(this, 'specFilter', {
+      get: function() {
+        self.deprecated('Getting specFilter directly from Env is deprecated, please check the specFilter option from `configuration`');
+        return config.specFilter;
+      },
+      set: function(val) {
+        self.deprecated('Setting specFilter directly on Env is deprecated, please use the specFilter option in `configure`');
+        config.specFilter = val;
+      }
+    });
 
     this.addSpyStrategy = function(name, fn) {
       if(!currentRunnable()) {
@@ -73304,6 +73496,7 @@ getJasmineRequireObj().Env = function(j$) {
     };
 
     j$.Expectation.addCoreMatchers(j$.matchers);
+    j$.Expectation.addAsyncCoreMatchers(j$.asyncMatchers);
 
     var nextSpecId = 0;
     var getNextSpecId = function() {
@@ -73316,10 +73509,23 @@ getJasmineRequireObj().Env = function(j$) {
     };
 
     var expectationFactory = function(actual, spec) {
-      return j$.Expectation.Factory({
+      return j$.Expectation.factory({
         util: j$.matchersUtil,
         customEqualityTesters: runnableResources[spec.id].customEqualityTesters,
         customMatchers: runnableResources[spec.id].customMatchers,
+        actual: actual,
+        addExpectationResult: addExpectationResult
+      });
+
+      function addExpectationResult(passed, result) {
+        return spec.addExpectationResult(passed, result);
+      }
+    };
+
+    var asyncExpectationFactory = function(actual, spec) {
+      return j$.Expectation.asyncFactory({
+        util: j$.matchersUtil,
+        customEqualityTesters: runnableResources[spec.id].customEqualityTesters,
         actual: actual,
         addExpectationResult: addExpectationResult
       });
@@ -73387,58 +73593,101 @@ getJasmineRequireObj().Env = function(j$) {
     var maximumSpecCallbackDepth = 20;
     var currentSpecCallbackDepth = 0;
 
+    /**
+     * Sets whether Jasmine should throw an Error when an expectation fails.
+     * This causes a spec to only have one expectation failure.
+     * @name Env#throwOnExpectationFailure
+     * @function
+     * @param {Boolean} value Whether to throw when a expectation fails
+     * @deprecated Use the `oneFailurePerSpec` option with {@link Env#configure}
+     */
     this.throwOnExpectationFailure = function(value) {
-      throwOnExpectationFailure = !!value;
+      this.deprecated('Setting throwOnExpectationFailure directly on Env is deprecated, please use the oneFailurePerSpec option in `configure`');
+      this.configure({oneFailurePerSpec: !!value});
     };
 
     this.throwingExpectationFailures = function() {
-      return throwOnExpectationFailure;
+      this.deprecated('Getting throwingExpectationFailures directly from Env is deprecated, please check the oneFailurePerSpec option from `configuration`');
+      return config.oneFailurePerSpec;
     };
 
+    /**
+     * Set whether to stop suite execution when a spec fails
+     * @name Env#stopOnSpecFailure
+     * @function
+     * @param {Boolean} value Whether to stop suite execution when a spec fails
+     * @deprecated Use the `failFast` option with {@link Env#configure}
+     */
     this.stopOnSpecFailure = function(value) {
-      stopOnSpecFailure = !!value;
+      this.deprecated('Setting stopOnSpecFailure directly is deprecated, please use the failFast option in `configure`');
+      this.configure({failFast: !!value});
     };
 
     this.stoppingOnSpecFailure = function() {
-      return stopOnSpecFailure;
+      this.deprecated('Getting stoppingOnSpecFailure directly from Env is deprecated, please check the failFast option from `configuration`');
+      return config.failFast;
     };
 
+    /**
+     * Set whether to randomize test execution order
+     * @name Env#randomizeTests
+     * @function
+     * @param {Boolean} value Whether to randomize execution order
+     * @deprecated Use the `random` option with {@link Env#configure}
+     */
     this.randomizeTests = function(value) {
-      random = !!value;
+      this.deprecated('Setting randomizeTests directly is deprecated, please use the random option in `configure`');
+      config.random = !!value;
     };
 
     this.randomTests = function() {
-      return random;
+      this.deprecated('Getting randomTests directly from Env is deprecated, please check the random option from `configuration`');
+      return config.random;
     };
 
+    /**
+     * Set the random number seed for spec randomization
+     * @name Env#seed
+     * @function
+     * @param {Number} value The seed value
+     * @deprecated Use the `seed` option with {@link Env#configure}
+     */
     this.seed = function(value) {
+      this.deprecated('Setting seed directly is deprecated, please use the seed option in `configure`');
       if (value) {
-        seed = value;
+        config.seed = value;
       }
-      return seed;
+      return config.seed;
     };
 
-    this.suppressLoadErrors = function() {
-      if (handlingLoadErrors) {
-        globalErrors.popListener();
-      }
-      handlingLoadErrors = false;
+    this.hidingDisabled = function(value) {
+      this.deprecated('Getting hidingDisabled directly from Env is deprecated, please check the hideDisabled option from `configuration`');
+      return config.hideDisabled;
     };
 
-    this.deprecated = function(msg) {
+    /**
+     * @name Env#hideDisabled
+     * @function
+     */
+    this.hideDisabled = function(value) {
+      this.deprecated('Setting hideDisabled directly is deprecated, please use the hideDisabled option in `configure`');
+      config.hideDisabled = !!value;
+    };
+
+    this.deprecated = function(deprecation) {
       var runnable = currentRunnable() || topSuite;
-      runnable.addDeprecationWarning(msg);
-      if(typeof console !== 'undefined' && typeof console.warn !== 'undefined') {
-        console.error('DEPRECATION: ' + msg);
+      runnable.addDeprecationWarning(deprecation);
+      if(typeof console !== 'undefined' && typeof console.error === 'function') {
+        console.error('DEPRECATION:', deprecation);
       }
     };
 
     var queueRunnerFactory = function(options, args) {
       var failFast = false;
       if (options.isLeaf) {
-        failFast = throwOnExpectationFailure;
+        failFast = config.oneFailurePerSpec;
       } else if (!options.isReporter) {
-        failFast = stopOnSpecFailure;
+        failFast = config.failFast;
       }
       options.clearStack = options.clearStack || clearStack;
       options.timeout = {setTimeout: realSetTimeout, clearTimeout: realClearTimeout};
@@ -73458,6 +73707,7 @@ getJasmineRequireObj().Env = function(j$) {
       id: getNextSuiteId(),
       description: 'Jasmine__TopLevel__Suite',
       expectationFactory: expectationFactory,
+      asyncExpectationFactory: asyncExpectationFactory,
       expectationResultFactory: expectationResultFactory
     });
     defaultResourcesForRunnable(topSuite.id);
@@ -73470,6 +73720,7 @@ getJasmineRequireObj().Env = function(j$) {
     /**
      * This represents the available reporter callback for an object passed to {@link Env#addReporter}.
      * @interface Reporter
+     * @see custom_reporter
      */
     var reporter = new j$.ReportDispatcher([
       /**
@@ -73477,6 +73728,9 @@ getJasmineRequireObj().Env = function(j$) {
        * @function
        * @name Reporter#jasmineStarted
        * @param {JasmineStartedInfo} suiteInfo Information about the full Jasmine suite that is being run
+       * @param {Function} [done] Used to specify to Jasmine that this callback is asynchronous and Jasmine should wait until it has been called before moving on.
+       * @returns {} Optionally return a Promise instead of using `done` to cause Jasmine to wait for completion.
+       * @see async
        */
       'jasmineStarted',
       /**
@@ -73484,6 +73738,9 @@ getJasmineRequireObj().Env = function(j$) {
        * @function
        * @name Reporter#jasmineDone
        * @param {JasmineDoneInfo} suiteInfo Information about the full Jasmine suite that just finished running.
+       * @param {Function} [done] Used to specify to Jasmine that this callback is asynchronous and Jasmine should wait until it has been called before moving on.
+       * @returns {} Optionally return a Promise instead of using `done` to cause Jasmine to wait for completion.
+       * @see async
        */
       'jasmineDone',
       /**
@@ -73491,6 +73748,9 @@ getJasmineRequireObj().Env = function(j$) {
        * @function
        * @name Reporter#suiteStarted
        * @param {SuiteResult} result Information about the individual {@link describe} being run
+       * @param {Function} [done] Used to specify to Jasmine that this callback is asynchronous and Jasmine should wait until it has been called before moving on.
+       * @returns {} Optionally return a Promise instead of using `done` to cause Jasmine to wait for completion.
+       * @see async
        */
       'suiteStarted',
       /**
@@ -73500,6 +73760,9 @@ getJasmineRequireObj().Env = function(j$) {
        * @function
        * @name Reporter#suiteDone
        * @param {SuiteResult} result
+       * @param {Function} [done] Used to specify to Jasmine that this callback is asynchronous and Jasmine should wait until it has been called before moving on.
+       * @returns {} Optionally return a Promise instead of using `done` to cause Jasmine to wait for completion.
+       * @see async
        */
       'suiteDone',
       /**
@@ -73507,6 +73770,9 @@ getJasmineRequireObj().Env = function(j$) {
        * @function
        * @name Reporter#specStarted
        * @param {SpecResult} result Information about the individual {@link it} being run
+       * @param {Function} [done] Used to specify to Jasmine that this callback is asynchronous and Jasmine should wait until it has been called before moving on.
+       * @returns {} Optionally return a Promise instead of using `done` to cause Jasmine to wait for completion.
+       * @see async
        */
       'specStarted',
       /**
@@ -73516,13 +73782,16 @@ getJasmineRequireObj().Env = function(j$) {
        * @function
        * @name Reporter#specDone
        * @param {SpecResult} result
+       * @param {Function} [done] Used to specify to Jasmine that this callback is asynchronous and Jasmine should wait until it has been called before moving on.
+       * @returns {} Optionally return a Promise instead of using `done` to cause Jasmine to wait for completion.
+       * @see async
        */
       'specDone'
     ], queueRunnerFactory);
 
     this.execute = function(runnablesToRun) {
       var self = this;
-      this.suppressLoadErrors();
+      installGlobalErrors();
 
       if(!runnablesToRun) {
         if (focusedRunnables.length) {
@@ -73533,8 +73802,8 @@ getJasmineRequireObj().Env = function(j$) {
       }
 
       var order = new j$.Order({
-        random: random,
-        seed: seed
+        random: config.random,
+        seed: config.seed
       });
 
       var processor = new j$.TreeProcessor({
@@ -73545,6 +73814,7 @@ getJasmineRequireObj().Env = function(j$) {
           currentlyExecutingSuites.push(suite);
           defaultResourcesForRunnable(suite.id, suite.parentSuite.id);
           reporter.suiteStarted(suite.result, next);
+          suite.startTimer();
         },
         nodeComplete: function(suite, result, next) {
           if (suite !== currentSuite()) {
@@ -73557,14 +73827,14 @@ getJasmineRequireObj().Env = function(j$) {
           if (result.status === 'failed') {
             hasFailures = true;
           }
-
+          suite.endTimer();
           reporter.suiteDone(result, next);
         },
         orderChildren: function(node) {
           return order.sort(node.children);
         },
         excludeNode: function(spec) {
-          return !self.specFilter(spec);
+          return !config.specFilter(spec);
         }
       });
 
@@ -73604,8 +73874,8 @@ getJasmineRequireObj().Env = function(j$) {
           /**
            * Information passed to the {@link Reporter#jasmineDone} event.
            * @typedef JasmineDoneInfo
-           * @property {OverallStatus} - The overall result of the sute: 'passed', 'failed', or 'incomplete'.
-           * @property {IncompleteReason} - Explanation of why the suite was incimplete.
+           * @property {OverallStatus} overallStatus - The overall result of the suite: 'passed', 'failed', or 'incomplete'.
+           * @property {IncompleteReason} incompleteReason - Explanation of why the suite was incomplete.
            * @property {Order} order - Information about the ordering (random or not) of this execution of the suite.
            * @property {Expectation[]} failedExpectations - List of expectations that failed in an {@link afterAll} at the global level.
            * @property {Expectation[]} deprecationWarnings - List of deprecation warnings that occurred at the global level.
@@ -73632,10 +73902,22 @@ getJasmineRequireObj().Env = function(j$) {
       reporter.addReporter(reporterToAdd);
     };
 
+    /**
+     * Provide a fallback reporter if no other reporters have been specified.
+     * @name Env#provideFallbackReporter
+     * @function
+     * @param {Reporter} reporterToAdd The reporter
+     * @see custom_reporter
+     */
     this.provideFallbackReporter = function(reporterToAdd) {
       reporter.provideFallbackReporter(reporterToAdd);
     };
 
+    /**
+     * Clear all registered reporters
+     * @name Env#clearReporters
+     * @function
+     */
     this.clearReporters = function() {
       reporter.clearReporters();
     };
@@ -73674,7 +73956,16 @@ getJasmineRequireObj().Env = function(j$) {
       return spyRegistry.spyOnProperty.apply(spyRegistry, arguments);
     };
 
+    this.spyOnAllFunctions = function() {
+      return spyRegistry.spyOnAllFunctions.apply(spyRegistry, arguments);
+    };
+
     this.createSpy = function(name, originalFn) {
+      if (arguments.length === 1 && j$.isFunction_(name)) {
+        originalFn = name;
+        name = originalFn.name;
+      }
+
       return spyFactory.createSpy(name, originalFn);
     };
 
@@ -73708,8 +73999,9 @@ getJasmineRequireObj().Env = function(j$) {
         description: description,
         parentSuite: currentDeclarationSuite,
         expectationFactory: expectationFactory,
+        asyncExpectationFactory: asyncExpectationFactory,
         expectationResultFactory: expectationResultFactory,
-        throwOnExpectationFailure: throwOnExpectationFailure
+        throwOnExpectationFailure: config.oneFailurePerSpec
       });
 
       return suite;
@@ -73801,6 +74093,7 @@ getJasmineRequireObj().Env = function(j$) {
         id: getNextSpecId(),
         beforeAndAfterFns: beforeAndAfterFns(suite),
         expectationFactory: expectationFactory,
+        asyncExpectationFactory: asyncExpectationFactory,
         resultCallback: specResultCallback,
         getSpecName: function(spec) {
           return getSpecName(spec, suite);
@@ -73812,11 +74105,11 @@ getJasmineRequireObj().Env = function(j$) {
         userContext: function() { return suite.clonedSharedUserContext(); },
         queueableFn: {
           fn: fn,
-          timeout: function() { return timeout || j$.DEFAULT_TIMEOUT_INTERVAL; }
+          timeout: timeout || 0
         },
-        throwOnExpectationFailure: throwOnExpectationFailure
+        throwOnExpectationFailure: config.oneFailurePerSpec,
+        timer: new j$.Timer(),
       });
-
       return spec;
 
       function specResultCallback(result, next) {
@@ -73882,12 +74175,20 @@ getJasmineRequireObj().Env = function(j$) {
       return currentRunnable().expect(actual);
     };
 
+    this.expectAsync = function(actual) {
+      if (!currentRunnable()) {
+        throw new Error('\'expectAsync\' was used when there was no current spec, this could be because an asynchronous test timed out');
+      }
+
+      return currentRunnable().expectAsync(actual);
+    };
+
     this.beforeEach = function(beforeEachFunction, timeout) {
       ensureIsNotNested('beforeEach');
       ensureIsFunctionOrAsync(beforeEachFunction, 'beforeEach');
       currentDeclarationSuite.beforeEach({
         fn: beforeEachFunction,
-        timeout: function() { return timeout || j$.DEFAULT_TIMEOUT_INTERVAL; }
+        timeout: timeout || 0
       });
     };
 
@@ -73896,7 +74197,7 @@ getJasmineRequireObj().Env = function(j$) {
       ensureIsFunctionOrAsync(beforeAllFunction, 'beforeAll');
       currentDeclarationSuite.beforeAll({
         fn: beforeAllFunction,
-        timeout: function() { return timeout || j$.DEFAULT_TIMEOUT_INTERVAL; }
+        timeout: timeout || 0
       });
     };
 
@@ -73906,7 +74207,7 @@ getJasmineRequireObj().Env = function(j$) {
       afterEachFunction.isCleanup = true;
       currentDeclarationSuite.afterEach({
         fn: afterEachFunction,
-        timeout: function() { return timeout || j$.DEFAULT_TIMEOUT_INTERVAL; }
+        timeout: timeout || 0
       });
     };
 
@@ -73915,7 +74216,7 @@ getJasmineRequireObj().Env = function(j$) {
       ensureIsFunctionOrAsync(afterAllFunction, 'afterAll');
       currentDeclarationSuite.afterAll({
         fn: afterAllFunction,
-        timeout: function() { return timeout || j$.DEFAULT_TIMEOUT_INTERVAL; }
+        timeout: timeout || 0
       });
     };
 
@@ -73937,11 +74238,11 @@ getJasmineRequireObj().Env = function(j$) {
         message += ': ';
         if (error.message) {
           message += error.message;
-        } else if (jasmine.isString_(error)) {
+        } else if (j$.isString_(error)) {
           message += error;
         } else {
           // pretty print all kind of objects. This includes arrays.
-          message += jasmine.pp(error);
+          message += j$.pp(error);
         }
       }
 
@@ -73954,7 +74255,7 @@ getJasmineRequireObj().Env = function(j$) {
         error: error && error.message ? error : null
       });
 
-      if (self.throwingExpectationFailures()) {
+      if (config.oneFailurePerSpec) {
         throw new Error(message);
       }
     };
@@ -73963,13 +74264,7 @@ getJasmineRequireObj().Env = function(j$) {
   return Env;
 };
 
-getJasmineRequireObj().JsApiReporter = function() {
-
-  var noopTimer = {
-    start: function(){},
-    elapsed: function(){ return 0; }
-  };
-
+getJasmineRequireObj().JsApiReporter = function(j$) {
   /**
    * @name jsApiReporter
    * @classdesc {@link Reporter} added by default in `boot.js` to record results for retrieval in javascript code. An instance is made available as `jsApiReporter` on the global object.
@@ -73977,7 +74272,7 @@ getJasmineRequireObj().JsApiReporter = function() {
    * @hideconstructor
    */
   function JsApiReporter(options) {
-    var timer = options.timer || noopTimer,
+    var timer = options.timer || j$.noopTimer,
         status = 'loaded';
 
     this.started = false;
@@ -74128,6 +74423,7 @@ getJasmineRequireObj().Any = function(j$) {
     }
 
     /* jshint -W122 */
+    /* global Symbol */
     if (typeof Symbol != 'undefined' && this.expectedObject == Symbol) {
       return typeof other == 'symbol';
     }
@@ -74179,7 +74475,7 @@ getJasmineRequireObj().ArrayContaining = function(j$) {
   };
 
   ArrayContaining.prototype.jasmineToString = function () {
-    return '<jasmine.arrayContaining(' + jasmine.pp(this.sample) +')>';
+    return '<jasmine.arrayContaining(' + j$.pp(this.sample) +')>';
   };
 
   return ArrayContaining;
@@ -74215,6 +74511,74 @@ getJasmineRequireObj().ArrayWithExactContents = function(j$) {
   };
 
   return ArrayWithExactContents;
+};
+
+getJasmineRequireObj().Empty = function (j$) {
+
+  function Empty() {}
+
+  Empty.prototype.asymmetricMatch = function (other) {
+    if (j$.isString_(other) || j$.isArray_(other) || j$.isTypedArray_(other)) {
+      return other.length === 0;
+    }
+
+    if (j$.isMap(other) || j$.isSet(other)) {
+      return other.size === 0;
+    }
+
+    if (j$.isObject_(other)) {
+      return Object.keys(other).length === 0;
+    }
+    return false;
+  };
+
+  Empty.prototype.jasmineToString = function () {
+    return '<jasmine.empty>';
+  };
+
+  return Empty;
+};
+
+getJasmineRequireObj().Falsy = function(j$) {
+
+  function Falsy() {}
+
+  Falsy.prototype.asymmetricMatch = function(other) {
+    return !other;
+  };
+
+  Falsy.prototype.jasmineToString = function() {
+    return '<jasmine.falsy>';
+  };
+
+  return Falsy;
+};
+
+getJasmineRequireObj().NotEmpty = function (j$) {
+
+  function NotEmpty() {}
+
+  NotEmpty.prototype.asymmetricMatch = function (other) {
+    if (j$.isString_(other) || j$.isArray_(other) || j$.isTypedArray_(other)) {
+      return other.length !== 0;
+    }
+
+    if (j$.isMap(other) || j$.isSet(other)) {
+      return other.size !== 0;
+    }
+
+    if (j$.isObject_(other)) {
+      return Object.keys(other).length !== 0;
+    }
+
+    return false;
+  };
+
+  NotEmpty.prototype.jasmineToString = function () {
+    return '<jasmine.notEmpty>';
+  };
+
+  return NotEmpty;
 };
 
 getJasmineRequireObj().ObjectContaining = function(j$) {
@@ -74286,6 +74650,21 @@ getJasmineRequireObj().StringMatching = function(j$) {
   };
 
   return StringMatching;
+};
+
+getJasmineRequireObj().Truthy = function(j$) {
+
+  function Truthy() {}
+
+  Truthy.prototype.asymmetricMatch = function(other) {
+    return !!other;
+  };
+
+  Truthy.prototype.jasmineToString = function() {
+    return '<jasmine.truthy>';
+  };
+
+  return Truthy;
 };
 
 getJasmineRequireObj().CallTracker = function(j$) {
@@ -74476,6 +74855,7 @@ getJasmineRequireObj().clearStack = function(j$) {
 
 getJasmineRequireObj().Clock = function() {
 
+  /* global process */
   var NODE_JS = typeof process !== 'undefined' && process.versions && typeof process.versions.node === 'string';
 
   /**
@@ -74541,7 +74921,7 @@ getJasmineRequireObj().Clock = function() {
      * The clock will be {@link Clock#install|install}ed before the function is called and {@link Clock#uninstall|uninstall}ed in a `finally` after the function completes.
      * @name Clock#withMock
      * @function
-     * @param {closure} Function The function to be called.
+     * @param {Function} closure The function to be called.
      */
     self.withMock = function(closure) {
       this.install();
@@ -74838,13 +75218,19 @@ getJasmineRequireObj().errors = function() {
 };
 getJasmineRequireObj().ExceptionFormatter = function(j$) {
 
+  var ignoredProperties = ['name', 'message', 'stack', 'fileName', 'sourceURL', 'line', 'lineNumber', 'column', 'description', 'jasmineMessage'];
+
   function ExceptionFormatter(options) {
     var jasmineFile = (options && options.jasmineFile) || j$.util.jasmineFile();
     this.message = function(error) {
       var message = '';
 
-      if (error.name && error.message) {
+      if (error.jasmineMessage) {
+        message += error.jasmineMessage;
+      } else if (error.name && error.message) {
         message += error.name + ': ' + error.message;
+      } else if (error.message) {
+        message += error.message;
       } else {
         message += error.toString() + ' thrown';
       }
@@ -74865,20 +75251,24 @@ getJasmineRequireObj().ExceptionFormatter = function(j$) {
         return null;
       }
 
-      var stackTrace = new j$.StackTrace(error.stack);
+      var stackTrace = new j$.StackTrace(error);
       var lines = filterJasmine(stackTrace);
+      var result = '';
 
       if (stackTrace.message) {
         lines.unshift(stackTrace.message);
       }
 
-      return lines.join('\n');
+      result += formatProperties(error);
+      result += lines.join('\n');
+
+      return result;
     };
 
     function filterJasmine(stackTrace) {
       var result = [],
         jasmineMarker = stackTrace.style === 'webkit' ? '<Jasmine>' : '    at <Jasmine>';
- 
+
       stackTrace.frames.forEach(function(frame) {
         if (frame.file && frame.file !== jasmineFile) {
           result.push(frame.raw);
@@ -74886,111 +75276,269 @@ getJasmineRequireObj().ExceptionFormatter = function(j$) {
           result.push(jasmineMarker);
         }
       });
- 
+
       return result;
+    }
+
+    function formatProperties(error) {
+      if (!(error instanceof Object)) {
+        return;
+      }
+
+      var result = {};
+      var empty = true;
+
+      for (var prop in error) {
+        if (j$.util.arrayContains(ignoredProperties, prop)) {
+          continue;
+        }
+        result[prop] = error[prop];
+        empty = false;
+      }
+
+      if (!empty) {
+        return 'error properties: ' + j$.pp(result) + '\n';
+      }
+
+      return '';
     }
   }
 
   return ExceptionFormatter;
 };
 
-getJasmineRequireObj().Expectation = function() {
+getJasmineRequireObj().Expectation = function(j$) {
+  var promiseForMessage = {
+    jasmineToString: function() { return 'a promise'; }
+  };
 
   /**
    * Matchers that come with Jasmine out of the box.
    * @namespace matchers
    */
   function Expectation(options) {
-    this.util = options.util || { buildFailureMessage: function() {} };
-    this.customEqualityTesters = options.customEqualityTesters || [];
-    this.actual = options.actual;
-    this.addExpectationResult = options.addExpectationResult || function(){};
-    this.isNot = options.isNot;
+    this.expector = new j$.Expector(options);
 
     var customMatchers = options.customMatchers || {};
     for (var matcherName in customMatchers) {
-      this[matcherName] = Expectation.prototype.wrapCompare(matcherName, customMatchers[matcherName]);
+      this[matcherName] = wrapSyncCompare(matcherName, customMatchers[matcherName]);
     }
   }
 
-  Expectation.prototype.wrapCompare = function(name, matcherFactory) {
-    return function() {
-      var args = Array.prototype.slice.call(arguments, 0),
-        expected = args.slice(0),
-        message = '';
-
-      args.unshift(this.actual);
-
-      var matcher = matcherFactory(this.util, this.customEqualityTesters),
-          matcherCompare = matcher.compare;
-
-      function defaultNegativeCompare() {
-        var result = matcher.compare.apply(null, args);
-        result.pass = !result.pass;
-        return result;
-      }
-
-      if (this.isNot) {
-        matcherCompare = matcher.negativeCompare || defaultNegativeCompare;
-      }
-
-      var result = matcherCompare.apply(null, args);
-
-      if (!result.pass) {
-        if (!result.message) {
-          args.unshift(this.isNot);
-          args.unshift(name);
-          message = this.util.buildFailureMessage.apply(null, args);
-        } else {
-          if (Object.prototype.toString.apply(result.message) === '[object Function]') {
-            message = result.message();
-          } else {
-            message = result.message;
-          }
-        }
-      }
-
-      if (expected.length == 1) {
-        expected = expected[0];
-      }
-
-      // TODO: how many of these params are needed?
-      this.addExpectationResult(
-        result.pass,
-        {
-          matcherName: name,
-          passed: result.pass,
-          message: message,
-          error: result.error,
-          actual: this.actual,
-          expected: expected // TODO: this may need to be arrayified/sliced
-        }
-      );
-    };
+  /**
+   * Add some context for an {@link expect}
+   * @function
+   * @name matchers#withContext
+   * @param {String} message - Additional context to show when the matcher fails
+   * @return {matchers}
+   */
+  Expectation.prototype.withContext = function withContext(message) {
+    return addFilter(this, new ContextAddingFilter(message));
   };
 
-  Expectation.addCoreMatchers = function(matchers) {
-    var prototype = Expectation.prototype;
+  /**
+   * Invert the matcher following this {@link expect}
+   * @member
+   * @name matchers#not
+   * @type {matchers}
+   * @example
+   * expect(something).not.toBe(true);
+   */
+  Object.defineProperty(Expectation.prototype, 'not', {
+    get: function() {
+      return addFilter(this, syncNegatingFilter);
+    }
+  });
+
+  /**
+   * Asynchronous matchers.
+   * @namespace async-matchers
+   */
+  function AsyncExpectation(options) {
+    var global = options.global || j$.getGlobal();
+    this.expector = new j$.Expector(options);
+
+    if (!global.Promise) {
+      throw new Error('expectAsync is unavailable because the environment does not support promises.');
+    }
+
+    if (!j$.isPromiseLike(this.expector.actual)) {
+      throw new Error('Expected expectAsync to be called with a promise.');
+    }
+  }
+
+  /**
+   * Add some context for an {@link expectAsync}
+   * @function
+   * @name async-matchers#withContext
+   * @param {String} message - Additional context to show when the async matcher fails
+   * @return {async-matchers}
+   */
+  AsyncExpectation.prototype.withContext = function withContext(message) {
+    return addFilter(this, new ContextAddingFilter(message));
+  };
+
+  /**
+   * Invert the matcher following this {@link expectAsync}
+   * @member
+   * @name async-matchers#not
+   * @type {async-matchers}
+   * @example
+   * await expectAsync(myPromise).not.toBeResolved();
+   * @example
+   * return expectAsync(myPromise).not.toBeResolved();
+   */
+  Object.defineProperty(AsyncExpectation.prototype, 'not', {
+    get: function() {
+      return addFilter(this, asyncNegatingFilter);
+    }
+  });
+
+  function wrapSyncCompare(name, matcherFactory) {
+    return function() {
+      var result = this.expector.compare(name, matcherFactory, arguments);
+      this.expector.processResult(result);
+    };
+  }
+
+  function wrapAsyncCompare(name, matcherFactory) {
+    return function() {
+      var self = this;
+
+      // Capture the call stack here, before we go async, so that it will contain
+      // frames that are relevant to the user instead of just parts of Jasmine.
+      var errorForStack = j$.util.errorWithStack();
+
+      return this.expector.compare(name, matcherFactory, arguments).then(function(result) {
+        self.expector.processResult(result, errorForStack, promiseForMessage);
+      });
+    };
+  }
+
+  function addCoreMatchers(prototype, matchers, wrapper) {
     for (var matcherName in matchers) {
       var matcher = matchers[matcherName];
-      prototype[matcherName] = prototype.wrapCompare(matcherName, matcher);
+      prototype[matcherName] = wrapper(matcherName, matcher);
+    }
+  }
+
+  function addFilter(source, filter) {
+    var result = Object.create(source);
+    result.expector = source.expector.addFilter(filter);
+    return result;
+  }
+
+  function negatedFailureMessage(result, matcherName, args, util) {
+    if (result.message) {
+      if (j$.isFunction_(result.message)) {
+        return result.message();
+      } else {
+        return result.message;
+      }
+    }
+
+    args = args.slice();
+    args.unshift(true);
+    args.unshift(matcherName);
+    return util.buildFailureMessage.apply(null, args);
+  }
+
+  function negate(result) {
+    result.pass = !result.pass;
+    return result;
+  }
+
+  var syncNegatingFilter = {
+    selectComparisonFunc: function(matcher) {
+      function defaultNegativeCompare() {
+        return negate(matcher.compare.apply(null, arguments));
+      }
+
+      return matcher.negativeCompare || defaultNegativeCompare;
+    },
+    buildFailureMessage: negatedFailureMessage
+  };
+
+  var asyncNegatingFilter = {
+    selectComparisonFunc: function(matcher) {
+      function defaultNegativeCompare() {
+        return matcher.compare.apply(this, arguments).then(negate);
+      }
+
+      return defaultNegativeCompare;
+    },
+    buildFailureMessage: negatedFailureMessage
+  };
+
+  function ContextAddingFilter(message) {
+    this.message = message;
+  }
+
+  ContextAddingFilter.prototype.modifyFailureMessage = function(msg) {
+    return this.message + ': ' + msg;
+  };
+
+  return {
+    factory: function(options) {
+      return new Expectation(options || {});
+    },
+    addCoreMatchers: function(matchers) {
+      addCoreMatchers(Expectation.prototype, matchers, wrapSyncCompare);
+    },
+    asyncFactory: function(options) {
+      return new AsyncExpectation(options || {});
+    },
+    addAsyncCoreMatchers: function(matchers) {
+      addCoreMatchers(AsyncExpectation.prototype, matchers, wrapAsyncCompare);
     }
   };
+};
 
-  Expectation.Factory = function(options) {
-    options = options || {};
+getJasmineRequireObj().ExpectationFilterChain = function() {
+  function ExpectationFilterChain(maybeFilter, prev) {
+    this.filter_ = maybeFilter;
+    this.prev_ = prev;
+  }
 
-    var expect = new Expectation(options);
-
-    // TODO: this would be nice as its own Object - NegativeExpectation
-    // TODO: copy instead of mutate options
-    options.isNot = true;
-    expect.not = new Expectation(options);
-
-    return expect;
+  ExpectationFilterChain.prototype.addFilter = function(filter) {
+    return new ExpectationFilterChain(filter, this);
   };
 
-  return Expectation;
+  ExpectationFilterChain.prototype.selectComparisonFunc = function(matcher) {
+    return this.callFirst_('selectComparisonFunc', arguments).result;
+  };
+
+  ExpectationFilterChain.prototype.buildFailureMessage = function(result, matcherName, args, util) {
+    return this.callFirst_('buildFailureMessage', arguments).result;
+  };
+
+  ExpectationFilterChain.prototype.modifyFailureMessage = function(msg) {
+    var result = this.callFirst_('modifyFailureMessage', arguments).result;
+    return result || msg;
+  };
+
+  ExpectationFilterChain.prototype.callFirst_ = function(fname, args) {
+    var prevResult;
+
+    if (this.prev_) {
+      prevResult = this.prev_.callFirst_(fname, args);
+
+      if (prevResult.found) {
+        return prevResult;
+      }
+    }
+
+    if (this.filter_ && this.filter_[fname]) {
+      return {
+        found: true,
+        result: this.filter_[fname].apply(this.filter_, args)
+      };
+    }
+
+    return {found: false};
+  };
+
+  return ExpectationFilterChain;
 };
 
 //TODO: expectation result may make more sense as a presentation of an expectation.
@@ -75040,10 +75588,16 @@ getJasmineRequireObj().buildExpectationResult = function() {
 
       var error = options.error;
       if (!error) {
-        try {
-          throw new Error(message());
-        } catch (e) {
-          error = e;
+        if (options.errorForStack) {
+          error = options.errorForStack;
+        } else if (options.stack) {
+          error = options;
+        } else {
+          try {
+            throw new Error(message());
+          } catch (e) {
+            error = e;
+          }
         }
       }
       return stackFormatter(error);
@@ -75051,6 +75605,87 @@ getJasmineRequireObj().buildExpectationResult = function() {
   }
 
   return buildExpectationResult;
+};
+
+getJasmineRequireObj().Expector = function(j$) {
+  function Expector(options) {
+    this.util = options.util || { buildFailureMessage: function() {} };
+    this.customEqualityTesters = options.customEqualityTesters || [];
+    this.actual = options.actual;
+    this.addExpectationResult = options.addExpectationResult || function(){};
+    this.filters = new j$.ExpectationFilterChain();
+  }
+
+  Expector.prototype.instantiateMatcher = function(matcherName, matcherFactory, args) {
+    this.matcherName = matcherName;
+    this.args = Array.prototype.slice.call(args, 0);
+    this.expected = this.args.slice(0);
+
+    this.args.unshift(this.actual);
+
+    var matcher = matcherFactory(this.util, this.customEqualityTesters);
+    var comparisonFunc = this.filters.selectComparisonFunc(matcher);
+    return comparisonFunc || matcher.compare;
+  };
+
+  Expector.prototype.buildMessage = function(result) {
+    var self = this;
+
+    if (result.pass) {
+      return '';
+    }
+
+    var msg = this.filters.buildFailureMessage(result, this.matcherName, this.args, this.util, defaultMessage);
+    return this.filters.modifyFailureMessage(msg || defaultMessage());
+
+    function defaultMessage() {
+      if (!result.message) {
+        var args = self.args.slice();
+        args.unshift(false);
+        args.unshift(self.matcherName);
+        return self.util.buildFailureMessage.apply(null, args);
+      } else if (j$.isFunction_(result.message)) {
+        return result.message();
+      } else {
+        return result.message;
+      }
+    }
+  };
+
+  Expector.prototype.compare = function(matcherName, matcherFactory, args) {
+    var matcherCompare = this.instantiateMatcher(matcherName, matcherFactory, args);
+    return matcherCompare.apply(null, this.args);
+  };
+
+  Expector.prototype.addFilter = function(filter) {
+    var result = Object.create(this);
+    result.filters = this.filters.addFilter(filter);
+    return result;
+  };
+
+  Expector.prototype.processResult = function(result, errorForStack, actualOverride) {
+    this.args[0] = actualOverride || this.args[0];
+    var message = this.buildMessage(result);
+
+    if (this.expected.length === 1) {
+      this.expected = this.expected[0];
+    }
+
+    this.addExpectationResult(
+      result.pass,
+      {
+        matcherName: this.matcherName,
+        passed: result.pass,
+        message: message,
+        error: errorForStack ? undefined : result.error,
+        errorForStack: errorForStack || undefined,
+        actual: this.actual,
+        expected: this.expected // TODO: this may need to be arrayified/sliced
+      }
+    );
+  };
+
+  return Expector;
 };
 
 getJasmineRequireObj().formatErrorMsg = function() {
@@ -75080,18 +75715,45 @@ getJasmineRequireObj().GlobalErrors = function(j$) {
       }
     };
 
+    this.originalHandlers = {};
+    this.jasmineHandlers = {};
+    this.installOne_ = function installOne_(errorType, jasmineMessage) {
+      function taggedOnError(error) {
+        error.jasmineMessage = jasmineMessage + ': ' + error;
+
+        var handler = handlers[handlers.length - 1];
+
+        if (handler) {
+          handler(error);
+        } else {
+          throw error;
+        }
+      }
+
+      this.originalHandlers[errorType] = global.process.listeners(errorType);
+      this.jasmineHandlers[errorType] = taggedOnError;
+
+      global.process.removeAllListeners(errorType);
+      global.process.on(errorType, taggedOnError);
+
+      this.uninstall = function uninstall() {
+        var errorTypes = Object.keys(this.originalHandlers);
+        for (var iType = 0; iType < errorTypes.length; iType++) {
+          var errorType = errorTypes[iType];
+          global.process.removeListener(errorType, this.jasmineHandlers[errorType]);
+          for (var i = 0; i < this.originalHandlers[errorType].length; i++) {
+            global.process.on(errorType, this.originalHandlers[errorType][i]);
+          }
+          delete this.originalHandlers[errorType];
+          delete this.jasmineHandlers[errorType];
+        }
+      };
+    };
+
     this.install = function install() {
       if (global.process && global.process.listeners && j$.isFunction_(global.process.on)) {
-        var originalHandlers = global.process.listeners('uncaughtException');
-        global.process.removeAllListeners('uncaughtException');
-        global.process.on('uncaughtException', onerror);
-
-        this.uninstall = function uninstall() {
-          global.process.removeListener('uncaughtException', onerror);
-          for (var i = 0; i < originalHandlers.length; i++) {
-            global.process.on('uncaughtException', originalHandlers[i]);
-          }
-        };
+        this.installOne_('uncaughtException', 'Uncaught exception');
+        this.installOne_('unhandledRejection', 'Unhandled promise rejection');
       } else {
         var originalHandler = global.onerror;
         global.onerror = onerror;
@@ -75112,6 +75774,146 @@ getJasmineRequireObj().GlobalErrors = function(j$) {
   }
 
   return GlobalErrors;
+};
+
+getJasmineRequireObj().toBeRejected = function(j$) {
+  /**
+   * Expect a promise to be rejected.
+   * @function
+   * @async
+   * @name async-matchers#toBeRejected
+   * @example
+   * await expectAsync(aPromise).toBeRejected();
+   * @example
+   * return expectAsync(aPromise).toBeRejected();
+   */
+  return function toBeResolved(util) {
+    return {
+      compare: function(actual) {
+        return actual.then(
+          function() { return {pass: false}; },
+          function() { return {pass: true}; }
+        );
+      }
+    };
+  };
+};
+
+getJasmineRequireObj().toBeRejectedWith = function(j$) {
+  /**
+   * Expect a promise to be rejected with a value equal to the expected, using deep equality comparison.
+   * @function
+   * @async
+   * @name async-matchers#toBeRejectedWith
+   * @param {Object} expected - Value that the promise is expected to be rejected with
+   * @example
+   * await expectAsync(aPromise).toBeRejectedWith({prop: 'value'});
+   * @example
+   * return expectAsync(aPromise).toBeRejectedWith({prop: 'value'});
+   */
+  return function toBeRejectedWith(util, customEqualityTesters) {
+    return {
+      compare: function(actualPromise, expectedValue) {
+        function prefix(passed) {
+          return 'Expected a promise ' +
+            (passed ? 'not ' : '') +
+            'to be rejected with ' + j$.pp(expectedValue);
+        }
+
+        return actualPromise.then(
+          function() {
+          return {
+            pass: false,
+            message: prefix(false) + ' but it was resolved.'
+          };
+        },
+        function(actualValue) {
+          if (util.equals(actualValue, expectedValue, customEqualityTesters)) {
+            return {
+              pass: true,
+              message: prefix(true) + '.'
+            };
+          } else {
+            return {
+              pass: false,
+              message: prefix(false) + ' but it was rejected with ' + j$.pp(actualValue) + '.'
+            };
+          }
+        }
+        );
+      }
+    };
+  };
+};
+
+getJasmineRequireObj().toBeResolved = function(j$) {
+  /**
+   * Expect a promise to be resolved.
+   * @function
+   * @async
+   * @name async-matchers#toBeResolved
+   * @example
+   * await expectAsync(aPromise).toBeResolved();
+   * @example
+   * return expectAsync(aPromise).toBeResolved();
+   */
+  return function toBeResolved(util) {
+    return {
+      compare: function(actual) {
+        return actual.then(
+          function() { return {pass: true}; },
+          function() { return {pass: false}; }
+        );
+      }
+    };
+  };
+};
+
+getJasmineRequireObj().toBeResolvedTo = function(j$) {
+  /**
+   * Expect a promise to be resolved to a value equal to the expected, using deep equality comparison.
+   * @function
+   * @async
+   * @name async-matchers#toBeResolvedTo
+   * @param {Object} expected - Value that the promise is expected to resolve to
+   * @example
+   * await expectAsync(aPromise).toBeResolvedTo({prop: 'value'});
+   * @example
+   * return expectAsync(aPromise).toBeResolvedTo({prop: 'value'});
+   */
+  return function toBeResolvedTo(util, customEqualityTesters) {
+    return {
+      compare: function(actualPromise, expectedValue) {
+        function prefix(passed) {
+          return 'Expected a promise ' +
+            (passed ? 'not ' : '') +
+            'to be resolved to ' + j$.pp(expectedValue);
+        }
+
+        return actualPromise.then(
+          function(actualValue) {
+          if (util.equals(actualValue, expectedValue, customEqualityTesters)) {
+            return {
+              pass: true,
+              message: prefix(true) + '.'
+            };
+          } else {
+            return {
+              pass: false,
+              message: prefix(false) + ' but it was resolved to ' + j$.pp(actualValue) + '.'
+            };
+          }
+        },
+        function() {
+          return {
+            pass: false,
+            message: prefix(false) + ' but it was rejected.'
+          };
+        }
+        );
+      }
+    };
+  };
 };
 
 getJasmineRequireObj().DiffBuilder = function(j$) {
@@ -75375,8 +76177,14 @@ getJasmineRequireObj().matchersUtil = function(j$) {
       });
 
       for (i = 0; i < aLength || i < bLength; i++) {
+        var formatter = false;
         diffBuilder.withPath(i, function() {
-          result = eq(i < aLength ? a[i] : void 0, i < bLength ? b[i] : void 0, aStack, bStack, customTesters, diffBuilder) && result;
+          if (i >= bLength) {
+            diffBuilder.record(a[i], void 0, actualArrayIsLongerFormatter);
+            result = false;
+          } else {
+            result = eq(i < aLength ? a[i] : void 0, i < bLength ? b[i] : void 0, aStack, bStack, customTesters, diffBuilder) && result;
+          }
         });
       }
       if (!result) {
@@ -75602,6 +76410,13 @@ getJasmineRequireObj().matchersUtil = function(j$) {
       ', but was ' + j$.pp(actual) + '.';
   }
 
+  function actualArrayIsLongerFormatter(actual, expected, path) {
+    return 'Unexpected ' +
+      path + (path.depth() ? ' = ' : '') +
+      j$.pp(actual) +
+      ' in array.';
+  }
+
   function formatKeyValuePairs(obj) {
     var formatted = '';
     for (var key in obj) {
@@ -75691,7 +76506,24 @@ getJasmineRequireObj().ObjectPath = function(j$) {
   return ObjectPath;
 };
 
-getJasmineRequireObj().toBe = function() {
+getJasmineRequireObj().requireAsyncMatchers = function(jRequire, j$) {
+  var availableMatchers = [
+      'toBeResolved',
+      'toBeRejected',
+      'toBeResolvedTo',
+      'toBeRejectedWith'
+    ],
+    matchers = {};
+
+  for (var i = 0; i < availableMatchers.length; i++) {
+    var name = availableMatchers[i];
+    matchers[name] = jRequire[name](j$);
+  }
+
+  return matchers;
+};
+
+getJasmineRequireObj().toBe = function(j$) {
   /**
    * {@link expect} the actual value to be `===` to the expected value.
    * @function
@@ -75700,12 +76532,20 @@ getJasmineRequireObj().toBe = function() {
    * @example
    * expect(thing).toBe(realThing);
    */
-  function toBe() {
+  function toBe(util) {
+    var tip = ' Tip: To check for deep equality, use .toEqual() instead of .toBe().';
+
     return {
       compare: function(actual, expected) {
-        return {
-          pass: actual === expected
+        var result = {
+          pass: actual === expected,
         };
+
+        if (typeof expected === 'object') {
+          result.message = util.buildFailureMessage('toBe', result.pass, actual, expected) + tip;
+        }
+
+        return result;
       }
     };
   }
@@ -76276,6 +77116,40 @@ getJasmineRequireObj().toHaveBeenCalledWith = function(j$) {
   return toHaveBeenCalledWith;
 };
 
+getJasmineRequireObj().toHaveClass = function(j$) {
+  /**
+   * {@link expect} the actual value to be a DOM element that has the expected class
+   * @function
+   * @name matchers#toHaveClass
+   * @param {Object} expected - The class name to test for
+   * @example
+   * var el = document.createElement('div');
+   * el.className = 'foo bar baz';
+   * expect(el).toHaveClass('bar');
+   */
+  function toHaveClass(util, customEqualityTesters) {
+    return {
+      compare: function(actual, expected) {
+        if (!isElement(actual)) {
+          throw new Error(j$.pp(actual) + ' is not a DOM element');
+        }
+
+        return {
+          pass: actual.classList.contains(expected)
+        };
+      }
+    };
+  }
+
+  function isElement(maybeEl) {
+    return maybeEl &&
+      maybeEl.classList &&
+      j$.isFunction_(maybeEl.classList.contains);
+  }
+
+  return toHaveClass;
+};
+
 getJasmineRequireObj().toMatch = function(j$) {
 
   var getErrorMsg = j$.formatErrorMsg('<toMatch>', 'expect(<expectation>).toMatch(<string> || <regexp>)');
@@ -76721,10 +77595,12 @@ getJasmineRequireObj().pp = function(j$) {
         this.emitScalar(value.toString());
       } else if (typeof value === 'function') {
         this.emitScalar('Function');
-      } else if (value.nodeType === 1) {
-        this.emitDomElement(value);
-      } else if (typeof value.nodeType === 'number') {
-        this.emitScalar('HTMLNode');
+      } else if (j$.isDomNode(value)) {
+        if (value.tagName) {
+          this.emitDomElement(value);
+        } else {
+          this.emitScalar('HTMLNode');
+        }
       } else if (value instanceof Date) {
         this.emitScalar('Date(' + value + ')');
       } else if (j$.isSet(value)) {
@@ -76915,15 +77791,29 @@ getJasmineRequireObj().pp = function(j$) {
   };
 
   PrettyPrinter.prototype.emitDomElement = function(el) {
-    var closingTag = '</' + el.tagName.toLowerCase() + '>';
+    var tagName = el.tagName.toLowerCase(),
+      attrs = el.attributes,
+      i,
+      len = attrs.length,
+      out = '<' + tagName,
+      attr;
 
-    if (el.innerHTML === '') {
-      this.append(el.outerHTML.replace(closingTag, ''));
-    } else {
-      var tagEnd = el.outerHTML.indexOf(el.innerHTML);
-      this.append(el.outerHTML.substring(0, tagEnd));
-      this.append('...' + closingTag);
+    for (i = 0; i < len; i++) {
+      attr = attrs[i];
+      out += ' ' + attr.name;
+
+      if (attr.value !== '') {
+        out += '="' + attr.value + '"';
+      }
     }
+
+    out += '>';
+
+    if (el.childElementCount !== 0 || el.textContent !== '') {
+      out += '...</' + tagName + '>';
+    }
+
+    this.append(out);
   };
 
   PrettyPrinter.prototype.formatProperty = function(obj, property, isGetter) {
@@ -77006,26 +77896,29 @@ getJasmineRequireObj().QueueRunner = function(j$) {
 
   function once(fn) {
     var called = false;
-    return function() {
+    return function(arg) {
       if (!called) {
         called = true;
-        fn.apply(null, arguments);
+        // Direct call using single parameter, because cleanup/next does not need more
+        fn(arg);
       }
       return null;
     };
   }
 
+  function emptyFn() {}
+
   function QueueRunner(attrs) {
     var queueableFns = attrs.queueableFns || [];
     this.queueableFns = queueableFns.concat(attrs.cleanupFns || []);
     this.firstCleanupIx = queueableFns.length;
-    this.onComplete = attrs.onComplete || function() {};
+    this.onComplete = attrs.onComplete || emptyFn;
     this.clearStack = attrs.clearStack || function(fn) {fn();};
-    this.onException = attrs.onException || function() {};
+    this.onException = attrs.onException || emptyFn;
     this.userContext = attrs.userContext || new j$.UserContext();
     this.timeout = attrs.timeout || {setTimeout: setTimeout, clearTimeout: clearTimeout};
-    this.fail = attrs.fail || function() {};
-    this.globalErrors = attrs.globalErrors || { pushListener: function() {}, popListener: function() {} };
+    this.fail = attrs.fail || emptyFn;
+    this.globalErrors = attrs.globalErrors || { pushListener: emptyFn, popListener: emptyFn };
     this.completeOnFirstError = !!attrs.completeOnFirstError;
     this.errored = false;
 
@@ -77067,14 +77960,16 @@ getJasmineRequireObj().QueueRunner = function(j$) {
         next(error);
       },
       cleanup = once(function cleanup() {
-        self.clearTimeout(timeoutId);
+        if (timeoutId !== void 0) {
+          self.clearTimeout(timeoutId);
+        }
         self.globalErrors.popListener(handleError);
       }),
       next = once(function next(err) {
         cleanup();
 
         if (j$.isError_(err)) {
-          if (!(err instanceof StopExecutionError)) {
+          if (!(err instanceof StopExecutionError) && !err.jasmineMessage) {
             self.fail(err);
           }
           self.errored = errored = true;
@@ -77106,12 +78001,16 @@ getJasmineRequireObj().QueueRunner = function(j$) {
 
     self.globalErrors.pushListener(handleError);
 
-    if (queueableFn.timeout) {
+    if (queueableFn.timeout !== undefined) {
+      var timeoutInterval = queueableFn.timeout || j$.DEFAULT_TIMEOUT_INTERVAL;
       timeoutId = self.setTimeout(function() {
-        var error = new Error('Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL.');
+        var error = new Error(
+          'Timeout - Async callback was not invoked within ' + timeoutInterval + 'ms ' +
+          (queueableFn.timeout ? '(custom timeout)' : '(set by jasmine.DEFAULT_TIMEOUT_INTERVAL)')
+        );
         onException(error);
         next();
-      }, queueableFn.timeout());
+      }, timeoutInterval);
     }
 
     try {
@@ -77160,7 +78059,7 @@ getJasmineRequireObj().QueueRunner = function(j$) {
         return;
       }
 
-      self.errored = result.errored;
+      self.errored = self.errored || result.errored;
 
       if (this.completeOnFirstError && result.errored) {
         this.skipToCleanup(iterativeIndex);
@@ -77320,6 +78219,7 @@ getJasmineRequireObj().interface = function(jasmine, env) {
      * @param {String} description Textual description of what this spec is checking
      * @param {implementationCallback} [testFunction] Function that contains the code of your test. If not provided the test will be `pending`.
      * @param {Int} [timeout={@link jasmine.DEFAULT_TIMEOUT_INTERVAL}] Custom timeout for an async spec.
+     * @see async
      */
     it: function() {
       return env.it.apply(env, arguments);
@@ -77349,6 +78249,7 @@ getJasmineRequireObj().interface = function(jasmine, env) {
      * @param {String} description Textual description of what this spec is checking.
      * @param {implementationCallback} testFunction Function that contains the code of your test.
      * @param {Int} [timeout={@link jasmine.DEFAULT_TIMEOUT_INTERVAL}] Custom timeout for an async spec.
+     * @see async
      */
     fit: function() {
       return env.fit.apply(env, arguments);
@@ -77361,6 +78262,7 @@ getJasmineRequireObj().interface = function(jasmine, env) {
      * @global
      * @param {implementationCallback} [function] Function that contains the code to setup your specs.
      * @param {Int} [timeout={@link jasmine.DEFAULT_TIMEOUT_INTERVAL}] Custom timeout for an async beforeEach.
+     * @see async
      */
     beforeEach: function() {
       return env.beforeEach.apply(env, arguments);
@@ -77373,6 +78275,7 @@ getJasmineRequireObj().interface = function(jasmine, env) {
      * @global
      * @param {implementationCallback} [function] Function that contains the code to teardown your specs.
      * @param {Int} [timeout={@link jasmine.DEFAULT_TIMEOUT_INTERVAL}] Custom timeout for an async afterEach.
+     * @see async
      */
     afterEach: function() {
       return env.afterEach.apply(env, arguments);
@@ -77387,6 +78290,7 @@ getJasmineRequireObj().interface = function(jasmine, env) {
      * @global
      * @param {implementationCallback} [function] Function that contains the code to setup your specs.
      * @param {Int} [timeout={@link jasmine.DEFAULT_TIMEOUT_INTERVAL}] Custom timeout for an async beforeAll.
+     * @see async
      */
     beforeAll: function() {
       return env.beforeAll.apply(env, arguments);
@@ -77401,6 +78305,7 @@ getJasmineRequireObj().interface = function(jasmine, env) {
      * @global
      * @param {implementationCallback} [function] Function that contains the code to teardown your specs.
      * @param {Int} [timeout={@link jasmine.DEFAULT_TIMEOUT_INTERVAL}] Custom timeout for an async afterAll.
+     * @see async
      */
     afterAll: function() {
       return env.afterAll.apply(env, arguments);
@@ -77416,6 +78321,25 @@ getJasmineRequireObj().interface = function(jasmine, env) {
      */
     expect: function(actual) {
       return env.expect(actual);
+    },
+
+    /**
+     * Create an asynchronous expectation for a spec. Note that the matchers
+     * that are provided by an asynchronous expectation all return promises
+     * which must be either returned from the spec or waited for using `await`
+     * in order for Jasmine to associate them with the correct spec.
+     * @name expectAsync
+     * @function
+     * @global
+     * @param {Object} actual - Actual computed value to test expectations against.
+     * @return {async-matchers}
+     * @example
+     * await expectAsync(somePromise).toBeResolved();
+     * @example
+     * return expectAsync(somePromise).toBeResolved();
+     */
+    expectAsync: function(actual) {
+      return env.expectAsync(actual);
     },
 
     /**
@@ -77465,6 +78389,18 @@ getJasmineRequireObj().interface = function(jasmine, env) {
      */
     spyOnProperty: function(obj, methodName, accessType) {
       return env.spyOnProperty(obj, methodName, accessType);
+    },
+
+    /**
+     * Installs spies on all writable and configurable properties of an object.
+     * @name spyOnAllFunctions
+     * @function
+     * @global
+     * @param {Object} obj - The object upon which to install the {@link Spy}s
+     * @returns {Object} the spied object
+     */
+    spyOnAllFunctions: function(obj) {
+      return env.spyOnAllFunctions(obj);
     },
 
     jsApiReporter: new jasmine.JsApiReporter({
@@ -77667,7 +78603,7 @@ getJasmineRequireObj().Spy = function (j$) {
 
       if (!strategy) {
         if (argsStrategies.any() && !baseStrategy.isConfigured()) {
-          throw new Error('Spy \'' + strategyArgs.name + '\' receieved a call with arguments ' + j$.pp(Array.prototype.slice.call(args)) + ' but all configured strategies specify other arguments.');
+          throw new Error('Spy \'' + strategyArgs.name + '\' received a call with arguments ' + j$.pp(Array.prototype.slice.call(args)) + ' but all configured strategies specify other arguments.');
         } else {
           strategy = baseStrategy;
         }
@@ -77885,6 +78821,23 @@ getJasmineRequireObj().SpyRegistry = function(j$) {
       return spy;
     };
 
+    this.spyOnAllFunctions = function(obj) {
+      if (j$.util.isUndefined(obj)) {
+        throw new Error('spyOnAllFunctions could not find an object to spy upon');
+      }
+
+      for (var prop in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, prop) && obj[prop] instanceof Function) {
+          var descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+          if ((descriptor.writable || descriptor.set) && descriptor.configurable) {
+            this.spyOn(obj, prop);
+          }
+        }
+      }
+
+      return obj;
+    };
+
     this.clearSpies = function() {
       var spies = currentSpies();
       for (var i = spies.length - 1; i >= 0; i--) {
@@ -78029,15 +78982,16 @@ getJasmineRequireObj().SpyStrategy = function(j$) {
 };
 
 getJasmineRequireObj().StackTrace = function(j$) {
-  function StackTrace(rawTrace) {
-    var lines = rawTrace
+  function StackTrace(error) {
+    var lines = error.stack
       .split('\n')
       .filter(function(line) { return line !== ''; });
 
-    if (lines[0].match(/^Error/)) {
-      this.message = lines.shift();
-    } else {
-      this.message = undefined;
+    var extractResult = extractMessage(error.message, lines);
+
+    if (extractResult) {
+      this.message = extractResult.message;
+      lines = extractResult.remainder;
     }
 
     var parseResult = tryParseFrames(lines);
@@ -78105,6 +79059,34 @@ getJasmineRequireObj().StackTrace = function(j$) {
       }
     }
   }
+
+  function extractMessage(message, stackLines) {
+    var len = messagePrefixLength(message, stackLines);
+
+    if (len > 0) {
+      return {
+        message: stackLines.slice(0, len).join('\n'),
+        remainder: stackLines.slice(len)
+      };
+    }
+  }
+
+  function messagePrefixLength(message, stackLines) {
+    if (!stackLines[0].match(/^Error/)) {
+      return 0;
+    }
+
+    var messageLines = message.split('\n');
+    var i;
+
+    for (i = 1; i < messageLines.length; i++) {
+      if (messageLines[i] !== stackLines[i]) {
+        return 0;
+      }
+    }
+
+    return messageLines.length;
+  }
   
   return StackTrace;
 };
@@ -78116,6 +79098,7 @@ getJasmineRequireObj().Suite = function(j$) {
     this.parentSuite = attrs.parentSuite;
     this.description = attrs.description;
     this.expectationFactory = attrs.expectationFactory;
+    this.asyncExpectationFactory = attrs.asyncExpectationFactory;
     this.expectationResultFactory = attrs.expectationResultFactory;
     this.throwOnExpectationFailure = !!attrs.throwOnExpectationFailure;
 
@@ -78123,6 +79106,8 @@ getJasmineRequireObj().Suite = function(j$) {
     this.afterFns = [];
     this.beforeAllFns = [];
     this.afterAllFns = [];
+
+    this.timer = attrs.timer || j$.noopTimer;
 
     this.children = [];
 
@@ -78134,18 +79119,24 @@ getJasmineRequireObj().Suite = function(j$) {
      * @property {Expectation[]} failedExpectations - The list of expectations that failed in an {@link afterAll} for this suite.
      * @property {Expectation[]} deprecationWarnings - The list of deprecation warnings that occurred on this suite.
      * @property {String} status - Once the suite has completed, this string represents the pass/fail status of this suite.
+     * @property {number} duration - The time in ms for Suite execution, including any before/afterAll, before/afterEach.
      */
     this.result = {
       id: this.id,
       description: this.description,
       fullName: this.getFullName(),
       failedExpectations: [],
-      deprecationWarnings: []
+      deprecationWarnings: [],
+      duration: null,
     };
   }
 
   Suite.prototype.expect = function(actual) {
     return this.expectationFactory(actual, this);
+  };
+
+  Suite.prototype.expectAsync = function(actual) {
+    return this.asyncExpectationFactory(actual, this);
   };
 
   Suite.prototype.getFullName = function() {
@@ -78176,6 +79167,14 @@ getJasmineRequireObj().Suite = function(j$) {
 
   Suite.prototype.afterAll = function(fn) {
     this.afterAllFns.unshift(fn);
+  };
+
+  Suite.prototype.startTimer = function() {
+    this.timer.start();
+  };
+
+  Suite.prototype.endTimer = function() {
+    this.result.duration = this.timer.elapsed();
   };
 
   function removeFns(queueableFns) {
@@ -78259,8 +79258,11 @@ getJasmineRequireObj().Suite = function(j$) {
     }
   };
 
-  Suite.prototype.addDeprecationWarning = function(msg) {
-    this.result.deprecationWarnings.push(this.expectationResultFactory({ message: msg }));
+  Suite.prototype.addDeprecationWarning = function(deprecation) {
+    if (typeof deprecation === 'string') {
+      deprecation = { message: deprecation };
+    }
+    this.result.deprecationWarnings.push(this.expectationResultFactory(deprecation));
   };
 
   function isFailure(args) {
@@ -78271,6 +79273,7 @@ getJasmineRequireObj().Suite = function(j$) {
 };
 
 if (typeof window == void 0 && typeof exports == 'object') {
+  /* globals exports */
   exports.Suite = jasmineRequire.Suite;
 }
 
@@ -78297,6 +79300,12 @@ getJasmineRequireObj().Timer = function() {
   return Timer;
 };
 
+getJasmineRequireObj().noopTimer = function() {
+  return {
+    start: function() {},
+    elapsed: function() { return 0; }
+  };
+};
 getJasmineRequireObj().TreeProcessor = function() {
   function TreeProcessor(attrs) {
     var tree = attrs.tree,
@@ -78473,8 +79482,11 @@ getJasmineRequireObj().TreeProcessor = function() {
 
             queueRunnerFactory({
               onComplete: function () {
+                var args = Array.prototype.slice.call(arguments, [0]);
                 node.cleanupBeforeAfter();
-                nodeComplete(node, node.getResult(), done);
+                nodeComplete(node, node.getResult(), function() {
+                  done.apply(undefined, args);
+                });
               },
               queueableFns: [onStart].concat(wrapChildren(node, segmentNumber)),
               userContext: node.sharedUserContext(),
@@ -78530,7 +79542,7 @@ getJasmineRequireObj().UserContext = function(j$) {
 };
 
 getJasmineRequireObj().version = function() {
-  return '3.0.0';
+  return '3.4.0';
 };
 
 /*!
@@ -98735,7 +99747,7 @@ var widgetsTooltip = $.ui.tooltip;
 }(function ($, undefined) {
 	"use strict";
 /*!
- * jsTree 3.3.5
+ * jsTree 3.3.8
  * http://jstree.com/
  *
  * Copyright (c) 2014 Ivan Bozhanov (http://vakata.com)
@@ -98776,7 +99788,7 @@ var widgetsTooltip = $.ui.tooltip;
 		 * specifies the jstree version in use
 		 * @name $.jstree.version
 		 */
-		version : '3.3.5',
+		version : '3.3.8',
 		/**
 		 * holds all the default options used when creating new instances
 		 * @name $.jstree.defaults
@@ -99152,7 +100164,7 @@ var widgetsTooltip = $.ui.tooltip;
 		 */
 		force_text : false,
 		/**
-		 * Should the node should be toggled if the text is double clicked . Defaults to `true`
+		 * Should the node be toggled if the text is double clicked. Defaults to `true`
 		 * @name $.jstree.defaults.core.dblclick_toggle
 		 */
 		dblclick_toggle : true,
@@ -99376,7 +100388,7 @@ var widgetsTooltip = $.ui.tooltip;
 		},
 		_kbevent_to_func : function (e) {
 			var keys = {
-				8: "Backspace", 9: "Tab", 13: "Return", 19: "Pause", 27: "Esc",
+				8: "Backspace", 9: "Tab", 13: "Enter", 19: "Pause", 27: "Esc",
 				32: "Space", 33: "PageUp", 34: "PageDown", 35: "End", 36: "Home",
 				37: "Left", 38: "Up", 39: "Right", 40: "Down", 44: "Print", 45: "Insert",
 				46: "Delete", 96: "Numpad0", 97: "Numpad1", 98: "Numpad2", 99 : "Numpad3",
@@ -99611,7 +100623,7 @@ var widgetsTooltip = $.ui.tooltip;
 					}, this))
 				.on('blur.jstree', '.jstree-anchor', $.proxy(function (e) {
 						this._data.core.focused = null;
-						$(e.currentTarget).filter('.jstree-hovered').mouseleave();
+						$(e.currentTarget).filter('.jstree-hovered').trigger('mouseleave');
 						this.element.attr('tabindex', '0');
 					}, this))
 				.on('focus.jstree', '.jstree-anchor', $.proxy(function (e) {
@@ -99619,8 +100631,8 @@ var widgetsTooltip = $.ui.tooltip;
 						if(tmp && tmp.id) {
 							this._data.core.focused = tmp.id;
 						}
-						this.element.find('.jstree-hovered').not(e.currentTarget).mouseleave();
-						$(e.currentTarget).mouseenter();
+						this.element.find('.jstree-hovered').not(e.currentTarget).trigger('mouseleave');
+						$(e.currentTarget).trigger('mouseenter');
 						this.element.attr('tabindex', '-1');
 					}, this))
 				.on('focus.jstree', $.proxy(function () {
@@ -99745,6 +100757,9 @@ var widgetsTooltip = $.ui.tooltip;
 			if(obj && obj.id) {
 				obj = obj.id;
 			}
+			if (obj instanceof $ && obj.length && obj[0].id) {
+				obj = obj[0].id;
+			}
 			var dom;
 			try {
 				if(this._model.data[obj]) {
@@ -99756,10 +100771,10 @@ var widgetsTooltip = $.ui.tooltip;
 				else if(typeof obj === "string" && (dom = $('#' + obj.replace($.jstree.idregex,'\\$&'), this.element)).length && this._model.data[dom.closest('.jstree-node').attr('id')]) {
 					obj = this._model.data[dom.closest('.jstree-node').attr('id')];
 				}
-				else if((dom = $(obj, this.element)).length && this._model.data[dom.closest('.jstree-node').attr('id')]) {
+				else if((dom = this.element.find(obj)).length && this._model.data[dom.closest('.jstree-node').attr('id')]) {
 					obj = this._model.data[dom.closest('.jstree-node').attr('id')];
 				}
-				else if((dom = $(obj, this.element)).length && dom.hasClass('jstree')) {
+				else if((dom = this.element.find(obj)).length && dom.hasClass('jstree')) {
 					obj = this._model.data[$.jstree.root];
 				}
 				else {
@@ -100053,7 +101068,7 @@ var widgetsTooltip = $.ui.tooltip;
 			return true;
 		},
 		/**
-		 * load an array of nodes (will also load unavailable nodes as soon as the appear in the structure). Used internally.
+		 * load an array of nodes (will also load unavailable nodes as soon as they appear in the structure). Used internally.
 		 * @private
 		 * @name _load_nodes(nodes [, callback])
 		 * @param  {array} nodes
@@ -100324,6 +101339,7 @@ var widgetsTooltip = $.ui.tooltip;
 					't_cnt'	: this._cnt,
 					'sel'	: this._data.core.selected
 				},
+				inst = this,
 				func = function (data, undefined) {
 					if(data.data) { data = data.data; }
 					var dat = data.dat,
@@ -100542,8 +101558,10 @@ var widgetsTooltip = $.ui.tooltip;
 						// 2) populate children (foreach)
 						for(i = 0, j = dat.length; i < j; i++) {
 							if (!m[dat[i].parent.toString()]) {
-								this._data.core.last_error = { 'error' : 'parse', 'plugin' : 'core', 'id' : 'core_07', 'reason' : 'Node with invalid parent', 'data' : JSON.stringify({ 'id' : dat[i].id.toString(), 'parent' : dat[i].parent.toString() }) };
-								this.settings.core.error.call(this, this._data.core.last_error);
+								if (typeof inst !== "undefined") {
+									inst._data.core.last_error = { 'error' : 'parse', 'plugin' : 'core', 'id' : 'core_07', 'reason' : 'Node with invalid parent', 'data' : JSON.stringify({ 'id' : dat[i].id.toString(), 'parent' : dat[i].parent.toString() }) };
+									inst.settings.core.error.call(inst, inst._data.core.last_error);
+								}
 								continue;
 							}
 
@@ -101010,7 +102028,7 @@ var widgetsTooltip = $.ui.tooltip;
 						tmp.children_d = tmp.children_d.concat(e.children_d);
 					}
 				}
-				tmp.children_d = tmp.children_d.concat(tmp.children);
+				tmp.children_d = tmp.children.concat(tmp.children_d);
 			}
 			if(d && d.children && d.children === true) {
 				tmp.state.loaded = false;
@@ -101047,7 +102065,7 @@ var widgetsTooltip = $.ui.tooltip;
 				this.element.empty().append(f);
 				//this.get_container_ul()[0].appendChild(f);
 			}
-			if(fe !== null) {
+			if(fe !== null && this.settings.core.restore_focus) {
 				tmp = this.get_node(fe, true);
 				if(tmp && tmp.length && tmp.children('.jstree-anchor')[0] !== document.activeElement) {
 					tmp.children('.jstree-anchor').focus();
@@ -101330,7 +102348,7 @@ var widgetsTooltip = $.ui.tooltip;
 			return node;
 		},
 		/**
-		 * opens a node, revaling its children. If the node is not loaded it will be loaded and opened once ready.
+		 * opens a node, revealing its children. If the node is not loaded it will be loaded and opened once ready.
 		 * @name open_node(obj [, callback, animation])
 		 * @param {mixed} obj the node to open
 		 * @param {Function} callback a function to execute once the node is opened
@@ -101534,7 +102552,7 @@ var widgetsTooltip = $.ui.tooltip;
 			}
 		},
 		/**
-		 * opens all nodes within a node (or the tree), revaling their children. If the node is not loaded it will be loaded and opened once ready.
+		 * opens all nodes within a node (or the tree), revealing their children. If the node is not loaded it will be loaded and opened once ready.
 		 * @name open_all([obj, animation, original_obj])
 		 * @param {mixed} obj the node to open recursively, omit to open all nodes in the tree
 		 * @param {Number} animation the animation duration in milliseconds when opening the nodes, the default is no animation
@@ -101575,7 +102593,7 @@ var widgetsTooltip = $.ui.tooltip;
 			}
 		},
 		/**
-		 * closes all nodes within a node (or the tree), revaling their children
+		 * closes all nodes within a node (or the tree), revealing their children
 		 * @name close_all([obj, animation])
 		 * @param {mixed} obj the node to close recursively, omit to close all nodes in the tree
 		 * @param {Number} animation the animation duration in milliseconds when closing the nodes, the default is no animation
@@ -102741,6 +103759,10 @@ var widgetsTooltip = $.ui.tooltip;
 			var tmp = chk.match(/^move_node|copy_node|create_node$/i) ? par : obj,
 				chc = this.settings.core.check_callback;
 			if(chk === "move_node" || chk === "copy_node") {
+				if((!more || !more.is_multi) && (chk === "move_node" && $.inArray(obj.id, par.children) === pos)) {
+					this._data.core.last_error = { 'error' : 'check', 'plugin' : 'core', 'id' : 'core_08', 'reason' : 'Moving node to its current position', 'data' : JSON.stringify({ 'chk' : chk, 'pos' : pos, 'obj' : obj && obj.id ? obj.id : false, 'par' : par && par.id ? par.id : false }) };
+					return false;
+				}
 				if((!more || !more.is_multi) && (obj.id === par.id || (chk === "move_node" && $.inArray(obj.id, par.children) === pos) || $.inArray(par.id, obj.children_d) !== -1)) {
 					this._data.core.last_error = { 'error' : 'check', 'plugin' : 'core', 'id' : 'core_01', 'reason' : 'Moving parent inside child', 'data' : JSON.stringify({ 'chk' : chk, 'pos' : pos, 'obj' : obj && obj.id ? obj.id : false, 'par' : par && par.id ? par.id : false }) };
 					return false;
@@ -103213,7 +104235,7 @@ var widgetsTooltip = $.ui.tooltip;
 			w2 = ai.width() * ai.length,
 			*/
 			t  = default_text;
-			h1 = $("<"+"div />", { css : { "position" : "absolute", "top" : "-200px", "left" : (rtl ? "0px" : "-1000px"), "visibility" : "hidden" } }).appendTo("body");
+			h1 = $("<"+"div />", { css : { "position" : "absolute", "top" : "-200px", "left" : (rtl ? "0px" : "-1000px"), "visibility" : "hidden" } }).appendTo(document.body);
 			h2 = $("<"+"input />", {
 						"value" : t,
 						"class" : "jstree-rename-input",
@@ -103239,6 +104261,7 @@ var widgetsTooltip = $.ui.tooltip;
 							s.replaceWith(a);
 							s.remove();
 							t = f ? t : $('<div></div>').append($.parseHTML(t)).html();
+							obj = this.get_node(obj);
 							this.set_text(obj, t);
 							nv = !!this.rename_node(obj, f ? $('<div></div>').text(v).text() : $('<div></div>').append($.parseHTML(v)).html());
 							if(!nv) {
@@ -103952,7 +104975,7 @@ var widgetsTooltip = $.ui.tooltip;
 							if(s.indexOf('down') !== -1) {
 								var selectedIds = this._cascade_new_checked_state(obj.id, false);
 
-								cur = cur.filter(function(id) {
+								cur = $.vakata.array_filter(cur, function(id) {
 									return allIds.indexOf(id) === -1 || selectedIds.indexOf(id) > -1;
 								});
 							}
@@ -103972,7 +104995,7 @@ var widgetsTooltip = $.ui.tooltip;
 									}
 								}
 
-								cur = cur.filter(function(id) {
+								cur = $.vakata.array_filter(cur, function(id) {
 									return obj.parents.indexOf(id) === -1;
 								});
 							}
@@ -104258,7 +105281,7 @@ var widgetsTooltip = $.ui.tooltip;
 		};
 		/**
 		 * enable a node's checkbox
-		 * @name disable_checkbox(obj)
+		 * @name enable_checkbox(obj)
 		 * @param {mixed} obj an array can be used too
 		 * @trigger enable_checkbox.jstree
 		 * @plugin checkbox
@@ -104398,7 +105421,7 @@ var widgetsTooltip = $.ui.tooltip;
 			var t = self.settings.checkbox.tie_selection;
 			var node = self._model.data[id];
 
-			return node.children_d.filter(function(_id) {
+			return $.vakata.array_filter(node.children_d, function(_id) {
 				return self._model.data[_id].state[ t ? 'selected' : 'checked' ];
 			});
 		};
@@ -104557,7 +105580,7 @@ var widgetsTooltip = $.ui.tooltip;
 		 */
 		this.get_checked = function (full) {
 			if(this.settings.checkbox.tie_selection) { return this.get_selected(full); }
-			return full ? $.map(this._data.checkbox.selected, $.proxy(function (i) { return this.get_node(i); }, this)) : this._data.checkbox.selected;
+			return full ? $.map(this._data.checkbox.selected, $.proxy(function (i) { return this.get_node(i); }, this)) : this._data.checkbox.selected.slice();
 		};
 		/**
 		 * get an array of all top level checked nodes (ignoring children of checked nodes) (if tie_selection is on in the settings this function will return the same as get_top_selected)
@@ -104644,7 +105667,7 @@ var widgetsTooltip = $.ui.tooltip;
 			return res;
 		};
 		this.refresh = function (skip_loading, forget_state) {
-			if(!this.settings.checkbox.tie_selection) {
+			if(this.settings.checkbox.tie_selection) {
 				this._data.checkbox.selected = [];
 			}
 			return parent.refresh.apply(this, arguments);
@@ -105146,7 +106169,7 @@ var widgetsTooltip = $.ui.tooltip;
 					vakata_context.element.html(vakata_context.html);
 				}
 				if(vakata_context.items.length) {
-					vakata_context.element.appendTo("body");
+					vakata_context.element.appendTo(document.body);
 					e = vakata_context.element;
 					x = vakata_context.position_x;
 					y = vakata_context.position_y;
@@ -105202,7 +106225,7 @@ var widgetsTooltip = $.ui.tooltip;
 			}
 		};
 		$(function () {
-			right_to_left = $("body").css("direction") === "rtl";
+			right_to_left = $(document.body).css("direction") === "rtl";
 			var to = false;
 
 			vakata_context.element = $("<ul class='vakata-context'></ul>");
@@ -105490,11 +106513,23 @@ var widgetsTooltip = $.ui.tooltip;
 			marker = $('<div id="jstree-marker">&#160;</div>').hide(); //.appendTo('body');
 
 		$(document)
+			.on('dragover.vakata.jstree', function (e) {
+				if (elm) {
+					$.vakata.dnd._trigger('move', e, { 'helper': $(), 'element': elm, 'data': drg });
+				}
+			})
+			.on('drop.vakata.jstree', function (e) {
+				if (elm) {
+					$.vakata.dnd._trigger('stop', e, { 'helper': $(), 'element': elm, 'data': drg });
+					elm = null;
+					drg = null;
+				}
+			})
 			.on('dnd_start.vakata.jstree', function (e, data) {
 				lastmv = false;
 				lastev = false;
 				if(!data || !data.data || !data.data.jstree) { return; }
-				marker.appendTo('body'); //.show();
+				marker.appendTo(document.body); //.show();
 			})
 			.on('dnd_move.vakata.jstree', function (e, data) {
 				var isDifferentNode = data.event.target !== lastev.target;
@@ -105628,7 +106663,7 @@ var widgetsTooltip = $.ui.tooltip;
 				lastmv = false;
 				data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
 				if (data.event.originalEvent && data.event.originalEvent.dataTransfer) {
-					data.event.originalEvent.dataTransfer.dropEffect = 'none';
+					//data.event.originalEvent.dataTransfer.dropEffect = 'none';
 				}
 				marker.hide();
 			})
@@ -105839,7 +106874,7 @@ var widgetsTooltip = $.ui.tooltip;
 						Math.abs(e.pageY - vakata_dnd.init_y) > (vakata_dnd.is_touch ? $.vakata.dnd.settings.threshold_touch : $.vakata.dnd.settings.threshold)
 					) {
 						if(vakata_dnd.helper) {
-							vakata_dnd.helper.appendTo("body");
+							vakata_dnd.helper.appendTo(document.body);
 							vakata_dnd.helper_w = vakata_dnd.helper.outerWidth();
 						}
 						vakata_dnd.is_drag = true;
@@ -107283,7 +108318,7 @@ var widgetsTooltip = $.ui.tooltip;
 	};
 	// include the wholerow plugin by default
 	// $.jstree.defaults.plugins.push("wholerow");
-	if(document.registerElement && Object && Object.create) {
+	if(window.customElements && Object && Object.create) {
 		var proto = Object.create(HTMLElement.prototype);
 		proto.createdCallback = function () {
 			var c = { core : {}, plugins : [] }, i;
@@ -107304,8 +108339,8 @@ var widgetsTooltip = $.ui.tooltip;
 		};
 		// proto.attributeChangedCallback = function (name, previous, value) { };
 		try {
-			document.registerElement("vakata-jstree", { prototype: proto });
-		} catch(ignore) { }
+			window.customElements.define("vakata-jstree", function() {}, { prototype: proto });
+		} catch (ignore) { }
 	}
 
 }));
