@@ -1,7 +1,7 @@
 {
   "name": "sw.allotmentclub.frontend",
   "title": "Allotmentclub management UI",
-  "version": "4.9.1",
+  "version": "4.9.2-dev.0",
   "devDependencies": {
     "grunt": "~1.0.1",
     "grunt-bower-concat": "~1.0.0",
