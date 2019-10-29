@@ -69,6 +69,9 @@ sw.allotmentclub.version = version.version;
 
             prepare_url: function () {
                 var self = this;
+                if (!self.url) {
+                    return;
+                }
                 if (self.url.match(/\{\w*_id\}|{viewname}/)) {
                     self.url = self.url.replace(
                         self.url.match(/\{\w*_id\}|{viewname}/)[0],
