@@ -104805,7 +104805,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
     + container.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"title","hash":{},"data":data}) : helper)))
     + "</h2>\n    <span class=\"jarviswidget-loader\">\n      <i class=\"fa fa-refresh fa-spin\"></i>\n    </span>\n  </header>\n  <div role=\"content\">\n    <div class=\"jarviswidget-editbox\"></div>\n    <div class=\"widget-body no-padding\">\n      <form class=\"dropzone\" id=\"uploadform\" action=\"\"></form>\n    </div>\n  </div>\n</div>\n";
 },"useData":true});
-/*global document, jQuery, window, sw, Offline, Rollbar */
+/*global document, jQuery, window, sw, Offline */
 (function ($) {
     "use strict";
     try {
@@ -104953,12 +104953,12 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
         });
 
     } catch (e) {
-        Rollbar.critical(e);
+        console.error(e);
     }
 
 }(jQuery));
 
-/*global Class, sw, window, Rollbar */
+/*global Class, sw, window */
 (function () {
     "use strict";
 
@@ -105072,21 +105072,21 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global jQuery, Class, sw, document, localStorage, confirm, Rollbar */
+/*global jQuery, Class, sw, document, localStorage, confirm */
 /*global ajja, eval, ResponsiveDatatablesHelper, Dropzone */
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.9.2"
+    "version": "4.9.3"
 };
 
 sw.allotmentclub.version = version.version;
+
 
 (function ($) {
     "use strict";
@@ -105690,13 +105690,12 @@ sw.allotmentclub.version = version.version;
         });
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }(jQuery));
 
-/*global jQuery, sw, drawBreadCrumb, window, Rollbar */
+/*global jQuery, sw, drawBreadCrumb, window */
 (function ($) {
     "use strict";
 
@@ -105832,13 +105831,12 @@ sw.allotmentclub.version = version.version;
 
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }(jQuery));
 
-/*global jQuery, sw, window, localStorage, VersionCompare, Rollbar */
+/*global jQuery, sw, window, localStorage, VersionCompare */
 (function ($) {
     "use strict";
 
@@ -105850,6 +105848,7 @@ sw.allotmentclub.version = version.version;
 
             __init__: function () {
                 var self = this;
+                asdf();
                 self.login();
                 self.form().on('submit', function (ev) {
                     ev.preventDefault();
@@ -105990,13 +105989,12 @@ sw.allotmentclub.version = version.version;
         };
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }(jQuery));
 
-/*global jQuery, Class, sw, FormData, drawBreadCrumb, window, Rollbar */
+/*global jQuery, Class, sw, FormData, drawBreadCrumb, window */
 /*jslint nomen: true, unparam: true, bitwise: true*/
 (function ($) {
     "use strict";
@@ -106013,14 +106011,13 @@ sw.allotmentclub.version = version.version;
         sw.allotmentclub.home = new HomeView();
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }(jQuery));
 
 /*global jQuery, document, svgPanZoom, sw, */
-/*global window, unescape, Rollbar */
+/*global window, unescape */
 /*jslint nomen: true, unparam: true, bitwise: true*/
 (function ($) {
     "use strict";
@@ -106109,13 +106106,12 @@ sw.allotmentclub.version = version.version;
         sw.allotmentclub.map_download = new MapDownloadView();
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }(jQuery));
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106186,13 +106182,12 @@ sw.allotmentclub.version = version.version;
             'keylist_attachment_download'
         );
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global sw, jQuery, Rollbar, window */
+/*global sw, jQuery, window */
 (function ($) {
     "use strict";
 
@@ -106243,14 +106238,13 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }(jQuery));
 
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106354,13 +106348,12 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global jQuery, sw, Rollbar */
+/*global jQuery, sw */
 (function ($) {
     "use strict";
 
@@ -106464,14 +106457,13 @@ sw.allotmentclub.version = version.version;
         sw.allotmentclub.mail_delete = new MailDeleteView();
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }(jQuery));
 
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106509,13 +106501,12 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106615,13 +106606,12 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106638,14 +106628,13 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106662,13 +106651,12 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106713,13 +106701,12 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106818,13 +106805,12 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106855,13 +106841,12 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106885,13 +106870,12 @@ sw.allotmentclub.version = version.version;
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -106977,13 +106961,12 @@ sw.allotmentclub.version = version.version;
 
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
 }());
 
-/*global jQuery, Class, sw, FormData, drawBreadCrumb, window, Rollbar */
+/*global jQuery, Class, sw, FormData, drawBreadCrumb, window */
 /*jslint nomen: true, unparam: true, bitwise: true*/
 (function ($) {
     "use strict";
@@ -107076,7 +107059,6 @@ sw.allotmentclub.version = version.version;
         }, 5000);
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
