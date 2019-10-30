@@ -1,4 +1,4 @@
-/*global document, jQuery, window, sw, Offline, Rollbar */
+/*global document, jQuery, window, sw, Offline */
 (function ($) {
     "use strict";
     try {
@@ -146,7 +146,7 @@
         });
 
     } catch (e) {
-        Rollbar.critical(e);
+        console.error(e);
     }
 
 }(jQuery));

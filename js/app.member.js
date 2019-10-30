@@ -1,4 +1,4 @@
-/*global sw, Rollbar */
+/*global sw */
 (function () {
     "use strict";
 
@@ -98,7 +98,6 @@
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 

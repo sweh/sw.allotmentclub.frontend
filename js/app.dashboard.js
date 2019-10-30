@@ -1,4 +1,4 @@
-/*global jQuery, Class, sw, FormData, drawBreadCrumb, window, Rollbar */
+/*global jQuery, Class, sw, FormData, drawBreadCrumb, window */
 /*jslint nomen: true, unparam: true, bitwise: true*/
 (function ($) {
     "use strict";
@@ -91,7 +91,6 @@
         }, 5000);
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 

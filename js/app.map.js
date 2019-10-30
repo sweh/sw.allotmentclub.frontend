@@ -1,5 +1,5 @@
 /*global jQuery, document, svgPanZoom, sw, */
-/*global window, unescape, Rollbar */
+/*global window, unescape */
 /*jslint nomen: true, unparam: true, bitwise: true*/
 (function ($) {
     "use strict";
@@ -88,7 +88,6 @@
         sw.allotmentclub.map_download = new MapDownloadView();
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 

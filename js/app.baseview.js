@@ -1,4 +1,4 @@
-/*global jQuery, Class, sw, document, localStorage, confirm, Rollbar */
+/*global jQuery, Class, sw, document, localStorage, confirm */
 /*global ajja, eval, ResponsiveDatatablesHelper, Dropzone */
 
 var version = {
@@ -7,6 +7,7 @@ var version = {
 };
 
 sw.allotmentclub.version = version.version;
+
 
 (function ($) {
     "use strict";
@@ -610,7 +611,6 @@ sw.allotmentclub.version = version.version;
         });
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 

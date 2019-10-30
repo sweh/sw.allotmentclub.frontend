@@ -1,4 +1,4 @@
-/*global jQuery, sw, drawBreadCrumb, window, Rollbar */
+/*global jQuery, sw, drawBreadCrumb, window */
 (function ($) {
     "use strict";
 
@@ -134,7 +134,6 @@
 
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 

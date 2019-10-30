@@ -1,4 +1,4 @@
-/*global jQuery, sw, Rollbar */
+/*global jQuery, sw */
 (function ($) {
     "use strict";
 
@@ -102,7 +102,6 @@
         sw.allotmentclub.mail_delete = new MailDeleteView();
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 

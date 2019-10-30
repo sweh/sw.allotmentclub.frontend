@@ -1,4 +1,4 @@
-/*global sw, jQuery, Rollbar, window */
+/*global sw, jQuery, window */
 (function ($) {
     "use strict";
 
@@ -49,7 +49,6 @@
         );
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 

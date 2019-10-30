@@ -1,4 +1,4 @@
-/*global jQuery, sw, window, localStorage, VersionCompare, Rollbar */
+/*global jQuery, sw, window, localStorage, VersionCompare */
 (function ($) {
     "use strict";
 
@@ -10,6 +10,7 @@
 
             __init__: function () {
                 var self = this;
+                asdf();
                 self.login();
                 self.form().on('submit', function (ev) {
                     ev.preventDefault();
@@ -150,7 +151,6 @@
         };
 
     } catch (e) {
-        Rollbar.critical(e);
         sw.flashmessage.error(e);
     }
 
