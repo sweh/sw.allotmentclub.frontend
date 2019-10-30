@@ -339,7 +339,7 @@
       $(document).ready(function () {
           var xhr = new XMLHttpRequest(),
               version = sw.allotmentclub.version;
-          if (!version.indexOf('dev')) {
+          if (version.indexOf('dev') === -1) {
               xhr.open('GET', window.application_url + '/sentry_frontend');
               xhr.onload = function() {
                   if (xhr.status === 200) {

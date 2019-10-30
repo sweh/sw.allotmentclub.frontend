@@ -10,7 +10,6 @@
 
             __init__: function () {
                 var self = this;
-                asdf();
                 self.login();
                 self.form().on('submit', function (ev) {
                     ev.preventDefault();
