@@ -34,6 +34,13 @@ module.exports = function (grunt) {
                 }
             }
         },
+        uglify: {
+            generated: {
+                options: {
+                    sourceMap: true
+                }
+            }
+        },
         copy: {
             changes: {
                 src: './CHANGES.txt',
