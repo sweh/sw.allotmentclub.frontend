@@ -2,10 +2,20 @@
 Change log for sw.allotmentclub
 ===============================
 
+4.9.5 (2019-11-11)
+==================
+
+- Fix import of energy values.
+
+- Add Zählerwechsel for Dr. Helbig.
+
+- Begin adding attachments to parcels.
+
+
 4.9.4 (2019-10-30)
 ==================
 
-- Nothing changed yet.
+- Add sourcemap for javascript code.
 
 
 4.9.3 (2019-10-30)

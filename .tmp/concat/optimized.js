@@ -105082,7 +105082,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.9.4"
+    "version": "4.10.0"
 };
 
 sw.allotmentclub.version = version.version;
