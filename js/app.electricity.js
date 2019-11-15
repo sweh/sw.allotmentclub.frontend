@@ -82,6 +82,9 @@
         });
         sw.allotmentclub.energy_price_view = new EnergyPriceView();
 
+        sw.allotmentclub.export_wire_transfer_view = new sw.allotmentclub.DownloadView(
+            'export_wire_transfer'
+        );
 
     } catch (e) {
         sw.flashmessage.error(e);
