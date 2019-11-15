@@ -105082,7 +105082,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.10.0"
+    "version": "4.11.0"
 };
 
 sw.allotmentclub.version = version.version;
@@ -106022,7 +106022,7 @@ sw.allotmentclub.version = version.version;
     "use strict";
 
     try {
-        var MapView, MapDownloadView;
+        var MapView, MapDownloadView, ParcelListView, ParcelAttachmentAddView;
 
         MapView = sw.allotmentclub.TableView.$extend({
             viewname: 'map',
@@ -106103,6 +106103,34 @@ sw.allotmentclub.version = version.version;
             }
         });
         sw.allotmentclub.map_download = new MapDownloadView();
+
+        ParcelListView = sw.allotmentclub.TableView.$extend({
+            viewname: 'parcel_list',
+            title: 'Flurstücke',
+            default_sort_by: [[1, "desc"]]
+        });
+        sw.allotmentclub.parcel_list_view = new ParcelListView();
+
+
+        ParcelAttachmentAddView = sw.allotmentclub.UploadForm.$extend({
+            template: 'upload',
+            is_subview: true,
+            callback: function () {
+                sw.allotmentclub.parcel_list_view.render();
+            }
+        });
+
+        sw.allotmentclub.parcel_map_upload_view = new ParcelAttachmentAddView(
+            'parcel_map_upload'
+        );
+
+        sw.allotmentclub.parcel_map_download_check_view = new sw.allotmentclub.View(
+            'parcel_map_download_check'
+        );
+
+        sw.allotmentclub.parcel_map_download_view = new sw.allotmentclub.DownloadView(
+            'parcel_map_download'
+        );
 
     } catch (e) {
         sw.flashmessage.error(e);
@@ -106958,6 +106986,9 @@ sw.allotmentclub.version = version.version;
         });
         sw.allotmentclub.energy_price_view = new EnergyPriceView();
 
+        sw.allotmentclub.export_wire_transfer_view = new sw.allotmentclub.DownloadView(
+            'export_wire_transfer'
+        );
 
     } catch (e) {
         sw.flashmessage.error(e);
