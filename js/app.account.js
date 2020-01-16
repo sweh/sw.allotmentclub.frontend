@@ -89,6 +89,10 @@
             'sepa_sammler_add'
         );
 
+        sw.allotmentclub.sepa_ueberweisung_add = new sw.allotmentclub.AddJSFormView(
+            'sepa_ueberweisung_add'
+        );
+
         sw.allotmentclub.sepa_sammler_edit = new sw.allotmentclub.EditJSFormView(
             'sepa_sammler_edit'
         );
