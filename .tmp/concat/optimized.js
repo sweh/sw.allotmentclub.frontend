@@ -105082,7 +105082,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.11.0"
+    "version": "4.12.0"
 };
 
 sw.allotmentclub.version = version.version;
@@ -106362,6 +106362,10 @@ sw.allotmentclub.version = version.version;
             'sepa_sammler_add'
         );
 
+        sw.allotmentclub.sepa_ueberweisung_add = new sw.allotmentclub.AddJSFormView(
+            'sepa_ueberweisung_add'
+        );
+
         sw.allotmentclub.sepa_sammler_edit = new sw.allotmentclub.EditJSFormView(
             'sepa_sammler_edit'
         );
@@ -106985,10 +106989,6 @@ sw.allotmentclub.version = version.version;
             default_sort_by: [[2, "asc"]]
         });
         sw.allotmentclub.energy_price_view = new EnergyPriceView();
-
-        sw.allotmentclub.export_wire_transfer_view = new sw.allotmentclub.DownloadView(
-            'export_wire_transfer'
-        );
 
     } catch (e) {
         sw.flashmessage.error(e);
