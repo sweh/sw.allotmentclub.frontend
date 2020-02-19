@@ -23,7 +23,7 @@
     "load-grunt-tasks": "~3.5.0"
   },
   "dependencies": {
-    "codecov": "2.3.0",
+    "codecov": "3.6.5",
     "graceful-fs": "^4.1.11",
     "grunt": "^1.0.1",
     "grunt-cli": "^1.2.0",
