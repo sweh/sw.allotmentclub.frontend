@@ -104462,7 +104462,7 @@ this["ajja"]["templates"]["form_markdown"] = Handlebars.template({"1":function(c
     + alias4(((helper = (helper = helpers.css_class || (depth0 != null ? depth0.css_class : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"css_class","hash":{},"data":data}) : helper)))
     + " markdown\" data-bind=\"value: "
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-    + "\"\n          style=\"height: 400px\" name=\""
+    + "\"\n          style=\"height: 400px; background-color: #FFFFFF;\" name=\""
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + "\"\n          "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.disabled : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -105108,7 +105108,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.12.3"
+    "version": "4.12.4"
 };
 
 sw.allotmentclub.version = version.version;
