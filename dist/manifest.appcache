@@ -3,7 +3,7 @@ CACHE MANIFEST
 
 CACHE:
 optimized.min.eb39fc02.css
-optimized.336f9f56.js
+optimized.8d568ba3.js
 copy_csv_xls.swf
 fonts/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff
 fonts/cJZKeOuBrn4kERxqtaUH3ZBw1xU1rKptJj_0jans920.woff2
@@ -50,4 +50,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: a15187f992657b51c4639d1e045b714a6e0d3d3301f5de3d5007393631ea4688
+# hash: 810f1dd371dbe60bcc0d6ca4cd50549e2f1c8d3c119721b5830aca68349219d2
