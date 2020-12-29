@@ -105117,7 +105117,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.13.1"
+    "version": "4.14.0"
 };
 
 sw.allotmentclub.version = version.version;
@@ -106354,15 +106354,15 @@ sw.allotmentclub.version = version.version;
 
         BankingAccountListView = sw.allotmentclub.TableView.$extend({
             viewname: 'banking_account_list',
-            title: 'Konto-Typen',
+            title: 'Übersicht',
             default_sort_by: [[1, "asc"]],
-            page_length: 20
+            page_length: 30
         });
         sw.allotmentclub.banking_account_list_view = new BankingAccountListView();
 
         BankingAccountListDetailView = sw.allotmentclub.TableView.$extend({
             viewname: 'banking_account_list_detail',
-            title: 'Konto-Typen Detail',
+            title: 'Position Detail',
             is_subview: true
         });
         sw.allotmentclub.banking_account_list_detail_view = new BankingAccountListDetailView();
