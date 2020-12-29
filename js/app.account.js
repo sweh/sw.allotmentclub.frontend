@@ -46,15 +46,15 @@
 
         BankingAccountListView = sw.allotmentclub.TableView.$extend({
             viewname: 'banking_account_list',
-            title: 'Konto-Typen',
+            title: 'Übersicht',
             default_sort_by: [[1, "asc"]],
-            page_length: 20
+            page_length: 30
         });
         sw.allotmentclub.banking_account_list_view = new BankingAccountListView();
 
         BankingAccountListDetailView = sw.allotmentclub.TableView.$extend({
             viewname: 'banking_account_list_detail',
-            title: 'Konto-Typen Detail',
+            title: 'Position Detail',
             is_subview: true
         });
         sw.allotmentclub.banking_account_list_detail_view = new BankingAccountListDetailView();
