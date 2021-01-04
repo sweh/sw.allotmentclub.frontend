@@ -15,6 +15,9 @@
         sw.allotmentclub.member_list_view = new MemberListView(
             'member_list'
         );
+        sw.allotmentclub.member_list_passive_view = new MemberListView(
+            'member_list_passive'
+        );
         sw.allotmentclub.member_list_tapped_view = new MemberListView(
             'member_list_leased'
         );
