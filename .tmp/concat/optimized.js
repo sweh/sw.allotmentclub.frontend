@@ -105117,7 +105117,7 @@ this["ajja"]["templates"]["upload"] = Handlebars.template({"compiler":[7,">= 4.0
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "4.14.0"
+    "version": "4.15.0"
 };
 
 sw.allotmentclub.version = version.version;
@@ -106588,6 +106588,9 @@ sw.allotmentclub.version = version.version;
         });
         sw.allotmentclub.member_list_view = new MemberListView(
             'member_list'
+        );
+        sw.allotmentclub.member_list_passive_view = new MemberListView(
+            'member_list_passive'
         );
         sw.allotmentclub.member_list_tapped_view = new MemberListView(
             'member_list_leased'
