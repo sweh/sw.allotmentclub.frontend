@@ -167,6 +167,14 @@ span.widget-icon {
     padding-top: 4px;
 }
 
+.md-editor .btn-primary {
+    display: none;
+}
+
+.md-editor textarea {
+    color: black !important;
+}
+
 @media only screen and (min-width:320px) and (max-width:479px) {
     .page-title {
         display: block;
