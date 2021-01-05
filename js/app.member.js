@@ -5,7 +5,8 @@
     try {
         var MemberListView, MemberUploadForm,
             MemberAssignmentsView, MemberAssignmentsBillView,
-            MemberAssignmentsDetailView, MemberSaleHistoryView;
+            MemberAssignmentsDetailView, MemberSaleHistoryView,
+            MemberAttachmentView, AttachmentUploadForm;
 
         MemberListView = sw.allotmentclub.TableView.$extend({
             title: 'Liste der Mitglieder',
@@ -99,6 +100,35 @@
         sw.allotmentclub.mv_entrance_list_view = new sw.allotmentclub.DownloadView(
             'mv_entrance_list'
         );
+
+        MemberAttachmentView = sw.allotmentclub.TableView.$extend({
+            viewname: 'member_attachment',
+            title: 'Anlagen',
+            is_subview: true
+        });
+        sw.allotmentclub.member_attachment_view = new MemberAttachmentView();
+
+        AttachmentUploadForm = sw.allotmentclub.UploadForm.$extend({
+            template: 'upload',
+            allowed_types: 'image/*,.jpg,.gif,.png,.pdf',
+            is_subview: true,
+            callback: function () {
+                sw.allotmentclub.member_list_view.render();
+            }
+        });
+
+        sw.allotmentclub.member_attachment_add = new AttachmentUploadForm(
+            'member_attachment_add'
+        );
+
+        sw.allotmentclub.member_attachment_download = new sw.allotmentclub.DownloadView(
+            'member_attachment_download'
+        );
+
+        sw.allotmentclub.member_attachment_delete = new sw.allotmentclub.DeleteView(
+            'member_attachment_delete'
+        );
+
 
     } catch (e) {
         sw.flashmessage.error(e);
