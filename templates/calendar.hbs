@@ -1,0 +1,54 @@
+        <div class="jarviswidget jarviswidget-color-blueDark">
+
+            <!-- widget options:
+            usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+            data-widget-colorbutton="false"
+            data-widget-editbutton="false"
+            data-widget-togglebutton="false"
+            data-widget-deletebutton="false"
+            data-widget-fullscreenbutton="false"
+            data-widget-custombutton="false"
+            data-widget-collapsed="true"
+            data-widget-sortable="false"
+
+            -->
+            <header>
+    <div role="dropdown" class="widget-toolbar smart-form">
+      <label class="select">
+        <select class="input-sm js-status-update" id="calendar_show"
+                style="width: 70px">
+            <option id="mt">Monat</option>
+            <option id="ag">Agenda</option>
+            <option id="td">Today</option>
+        </select>
+        <i> </i>
+      </label>
+    </div>
+                <span class="widget-icon"> <i class="fa fa-calendar"></i> </span>
+                <h2>Kalender</h2>
+            </header>
+
+            <!-- widget div-->
+            <div>
+
+                <div class="widget-body no-padding">
+                    <!-- content goes here -->
+                    <div class="widget-body-toolbar">
+
+                        <div id="calendar-buttons">
+
+                            <div class="btn-group">
+                                <a href="javascript:void(0)" class="btn btn-default btn-xs" id="btn-prev"><i class="fa fa-chevron-left"></i></a>
+                                <a href="javascript:void(0)" class="btn btn-default btn-xs" id="btn-next"><i class="fa fa-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="calendar"></div>
+
+                    <!-- end content -->
+                </div>
+
+            </div>
+            <!-- end widget div -->
+        </div>

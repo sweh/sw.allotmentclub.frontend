@@ -87,7 +87,10 @@
                 var self = this, view;
                 if (!id) {
                     if ($('.page-title').length) {
-                        $('.page-title')[0].childNodes[2].textContent = ' ' + self.page_title;
+                        var innerHTML = $('.page-title')[0].innerHTML;
+                        innerHTML = innerHTML.replace(
+                            innerHTML.split('</i>')[1], ' ' + self.page_title);
+                        $('.page-title')[0].innerHTML = innerHTML;
                         $('.page-title').find('i').attr(
                             'class',
                             'fa-fw fa ' + self.page_css

@@ -213,6 +213,7 @@ module.exports = function (grunt) {
                     './js/app.login.js',
                     './js/app.home.js',
                     './js/app.map.js',
+                    './js/app.calendar.js',
                     './js/app.account.js',
                     './js/app.mail.js',
                     './js/app.depot.js',
