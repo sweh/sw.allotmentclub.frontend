@@ -103,10 +103,10 @@
                         category: item[1].value,
                         title: item[2].value,
                         description: item[3].value,
-                        allday: item[6].value,
+                        allday: item[7].value,
                         start: item[4].value,
                         end: item[5].value,
-                        owner: item[7].value,
+                        owner: item[8].value,
                     };
                     sw.allotmentclub.add_event(data);
                 });
