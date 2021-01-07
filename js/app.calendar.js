@@ -143,6 +143,9 @@
             );
         };
 
+        sw.allotmentclub.infobrief_download = new sw.allotmentclub.DownloadView(
+            'infobrief_print'
+        );
     } catch (e) {
         sw.flashmessage.error(e);
     }
