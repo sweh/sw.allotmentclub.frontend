@@ -10,3 +10,4 @@ lcov.info
 .grunt/
 _SpecRunner.html
 tags*
+.tmp/
