@@ -348,12 +348,17 @@ sw.allotmentclub.version = version.version;
                 $.fn.dataTable.moment('DD.MM.YYYY HH:mm');
             },
 
+            register_date_sorting: function () {
+                $.fn.dataTable.moment('DD.MM.YYYY');
+            },
+
             init_datatable: function () {
                 var self = this,
                     table = self.dom().find('table'),
                     breakpointDefinition = { tablet: 1024, phone: 480 };
                 self.register_kilowatthour_sorting();
                 self.register_datetime_sorting();
+                self.register_date_sorting();
                 table.dataTable({
                     'language': {
                         "sEmptyTable": "Keine Daten in der Tabelle vorhanden",
@@ -515,6 +520,13 @@ sw.allotmentclub.version = version.version;
                         format: 'DD.MM.YYYY HH:mm',
                         locale: 'de',
                         stepping: 15
+                    });
+                    $('input.datepicker').on('dp.change', function (ev) {
+                        $(ev.currentTarget).change();
+                    });
+                    $('input.datepicker').datetimepicker({
+                        format: 'DD.MM.YYYY',
+                        locale: 'de',
                     });
                     if ($('#documents-list').length) {
                         var widget, dropzone;

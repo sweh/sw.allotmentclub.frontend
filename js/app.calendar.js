@@ -124,6 +124,9 @@
                 classname = 'bg-color-red';
             } else if (item.category === 'Mitglieder') {
                 icon = 'fa-user';
+            } else if (item.category === 'Geburtstage') {
+                icon = 'fa-trophy';
+                classname = 'bg-color-green';
             }
             $('#calendar').fullCalendar(
                 'renderEvent',
