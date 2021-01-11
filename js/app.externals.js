@@ -21,6 +21,10 @@
             'external_edit'
         );
 
+        sw.allotmentclub.external_delete = new sw.allotmentclub.DeleteView(
+            'external_delete'
+        );
+
     } catch (e) {
         sw.flashmessage.error(e);
     }
