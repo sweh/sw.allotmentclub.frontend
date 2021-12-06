@@ -13,7 +13,7 @@
     "bootstrapvalidator": "0.5.2",
     "bower-knockout-mapping": "2.5.0",
     "chosen": "master",
-    "classy": "https://github.com/gocept/classy.git",
+    "classy": "https://github.com/sweh/classy.git",
     "datatables": "1.10.2",
     "datatables-colvis": "1.1.1",
     "datatables-tabletools": "2.2.4",
