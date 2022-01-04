@@ -3,7 +3,7 @@
 
 var version = {
     "name": "sw.allotmentclub.frontend",
-    "version": "5.5.1"
+    "version": "5.5.2-dev.0"
 };
 
 sw.allotmentclub.version = version.version;
