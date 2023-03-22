@@ -3,7 +3,7 @@
     "use strict";
 
     try {
-        var DepotListView, DepotUploadForm;
+        var DepotListView, DepotUploadForm, DepotEditView;
 
 
         DepotListView = sw.allotmentclub.TableView.$extend({
@@ -23,9 +23,10 @@
         sw.allotmentclub.depot_add = new DepotUploadForm(
             'depot_add'
         );
-        sw.allotmentclub.depot_edit = new DepotUploadForm(
-            'depot_edit'
-        );
+        DepotEditView = sw.allotmentclub.EditJSFormView.$extend({
+            viewname: 'depot_edit',
+        });
+        sw.allotmentclub.depot_edit = new DepotEditView('depot_edit');
 
         sw.allotmentclub.depot_delete = new sw.allotmentclub.DeleteView(
             'depot_delete'
