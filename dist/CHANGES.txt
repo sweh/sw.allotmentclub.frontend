@@ -2,7 +2,15 @@
 Change log for sw.allotmentclub
 ===============================
 
-5.8.2 (2023-03-22)
+5.9.1 (2023-06-19)
+==================
+
+- Remove "Kontoinhaber" from Beitrittserklärung.
+
+- Add new and remove old users after new Vorstand was elected.
+
+
+5.9.0 (2023-03-22)
 ==================
 
 - Add category to depot items.
