@@ -5,7 +5,7 @@
     try {
         var BookingListView, MemberAccountListView,
             MemberAccountDetailListView, BankingAccountListView,
-            BankingAccountListDetailView,
+            BankingAccountListDetailView, BookingCSVImportView,
             SEPASammlerListView, SEPASammlerEntryListView,
             SEPADirectDebitView, MemberAccountDetailSwitchIRView;
 
@@ -15,6 +15,18 @@
             default_sort_by: [[1, "asc"], [2, "asc"]]
         });
         sw.allotmentclub.booking_list_view = new BookingListView();
+
+        BookingCSVImportView = sw.allotmentclub.UploadForm.$extend({
+            template: 'upload',
+            is_subview: true,
+            callback: function (a,b,c,d) {
+                debugger;
+                sw.allotmentclub.booking_list_view.render();
+            }
+        });
+        sw.allotmentclub.booking_csv_import = new BookingCSVImportView(
+            'booking_csv_import'
+        );
 
         sw.allotmentclub.map_booking = new sw.allotmentclub.EditJSFormView(
             'map_booking'
@@ -51,6 +63,7 @@
             page_length: 30
         });
         sw.allotmentclub.banking_account_list_view = new BankingAccountListView();
+
 
         BankingAccountListDetailView = sw.allotmentclub.TableView.$extend({
             viewname: 'banking_account_list_detail',

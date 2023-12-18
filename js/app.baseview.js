@@ -607,7 +607,11 @@ sw.allotmentclub.version = version.version;
                         acceptedFiles: self.allowed_types
                     }
                 );
-                self.dropzone.on('success', function () {
+                self.dropzone.on('success', function (_, res) {
+                    if (res && (res.status === 'error')) {
+                      sw.flashmessage.error(res.message);
+                      return;
+                    }
                     self.success_callback();
                 });
             }
