@@ -20,7 +20,6 @@
             template: 'upload',
             is_subview: true,
             callback: function (a,b,c,d) {
-                debugger;
                 sw.allotmentclub.booking_list_view.render();
             }
         });
