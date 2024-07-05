@@ -3,8 +3,8 @@
     "use strict";
 
     try {
-        var KeylistsView, KeysView, KeylistAttachmentView,
-            AttachmentUploadForm;
+        var KeylistsView, KeysView, KeyAddView, KeylistAttachmentView,
+            KeylistAttachmentUploadForm;
 
         KeylistsView = sw.allotmentclub.TableView.$extend({
             viewname: 'keylists',
@@ -34,9 +34,12 @@
         });
         sw.allotmentclub.keys_view = new KeysView();
 
-        sw.allotmentclub.key_add = new sw.allotmentclub.AddJSFormView(
-            'key_add'
-        );
+        KeyAddView = sw.allotmentclub.AddJSFormView.$extend({
+            viewname: 'key_add',
+            allowed_types: ".pdf,application/pdf,.gif,.jpg,.png",
+            display_list_widget: sw.allotmentclub.DisplayListWidget,
+        });
+        sw.allotmentclub.key_add = new KeyAddView('key_add');
 
         sw.allotmentclub.key_edit = new sw.allotmentclub.EditJSFormView(
             'key_edit'
@@ -46,6 +49,10 @@
             'key_delete'
         );
 
+        sw.allotmentclub.keylist_attachment_download = new sw.allotmentclub.DownloadView(
+            'key_attachment_download'
+        );
+
         KeylistAttachmentView = sw.allotmentclub.TableView.$extend({
             viewname: 'keylist_attachment',
             title: 'Anlagen',
@@ -53,7 +60,7 @@
         });
         sw.allotmentclub.keylist_attachment_view = new KeylistAttachmentView();
 
-        AttachmentUploadForm = sw.allotmentclub.UploadForm.$extend({
+        KeylistAttachmentUploadForm = sw.allotmentclub.UploadForm.$extend({
             template: 'upload',
             allowed_types: 'image/*,.jpg,.gif,.png,.pdf,application/pdf',
             is_subview: true,
@@ -61,7 +68,7 @@
                 sw.allotmentclub.keylist_list_view.render();
             }
         });
-        sw.allotmentclub.keylist_attachment_add = new AttachmentUploadForm(
+        sw.allotmentclub.keylist_attachment_add = new KeylistAttachmentUploadForm(
             'keylist_attachment_add'
         );
 
