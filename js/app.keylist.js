@@ -55,7 +55,7 @@
 
         AttachmentUploadForm = sw.allotmentclub.UploadForm.$extend({
             template: 'upload',
-            allowed_types: 'image/*,.jpg,.gif,.png',
+            allowed_types: 'image/*,.jpg,.gif,.png,.pdf,application/pdf',
             is_subview: true,
             callback: function () {
                 sw.allotmentclub.keylist_list_view.render();
