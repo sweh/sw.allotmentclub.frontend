@@ -37540,6 +37540,7 @@ this["ajja"]["templates"]["table_row"] = Handlebars.template({"1":function(conta
     $.fn.form_submit_button = function (action) {
         return this.each(function () {
             $(this).on('click', function (event) {
+                event.preventDefault();
                 var button = this, form;
                 button.disabled = true;
                 form = $(this).closest('form').data('form');
