@@ -36,7 +36,7 @@
 
         KeyAddView = sw.allotmentclub.AddJSFormView.$extend({
             viewname: 'key_add',
-            allowed_types: ".pdf,application/pdf,.gif,.jpg,.png",
+            allowed_types: 'image/*,.jpg,.gif,.png,.pdf,application/pdf',
             display_list_widget: sw.allotmentclub.DisplayListWidget,
         });
         sw.allotmentclub.key_add = new KeyAddView('key_add');
